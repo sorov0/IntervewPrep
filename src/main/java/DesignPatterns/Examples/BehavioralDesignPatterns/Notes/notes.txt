@@ -1,0 +1,22 @@
+
+# Behavioural Design Patterns: It guides how different objects communicate with each other effectively
+                               and distribute task efficiently, making software system flexible and
+                               east to maintain.
+
+
+1. State Patterns
+2. Observer
+3. Strategy
+4. Chain of Responsibility
+5. Template
+6. Interpreter
+7. Command
+8. Iterator
+9. Visitor
+10. Mediator
+11. Memento
+
+# StrategyPattern: We use Strategy pattern in scenarios, when we have parent child relationship b/w classes
+                   And Two Child have same code(Code Duplicacy) and that code is not present in the base class
+
+# Observer Pattern: Observer Desgin Pattern mainly used in notification or alert to the client.

@@ -1,0 +1,94 @@
+
+# Creational Design pattern: It deals with the various design patterns invloving creation of object and its control.
+                             Its main responsibility is to control the creation of objects.
+
+1. Prototype DP
+2. Singleton DP
+3. Factory DP
+4. Abstract Factory DP
+5. Builder DP
+
+# Prototype: The most simple pattern, It is used when we have to make clone or copy from existing objects.
+             Cloning a big, expensive objects is difficult, When we want to clone it with minor modification,
+             and Creation of that object is very very expensive, The prototype pattern comes handy.
+             Expensive meaning, The Object is having a lot of attributes.
+
+====>>>     Problems while cloning the objects with normal existing ways:
+            1. Private attributes of an object are not accessible in another class while cloning.
+               We can access it using getter method, but suppose even getter method is made private,
+               We cannot access that attribute, so cloning an object in another class(Client) would not be possible.
+
+            2. Suppose an object has too many attributes, and in different scenarios, Suppose we want to clone
+               that object with less number of attributes or more number of attributes, In such cases, Each different class,
+               who is cloning different number of attributes, must be aware of all its attributes. This again
+               is not a good design and is prone to error.
+               Meaning, the Client(in which cloning code or logic is there), has to know about all its attributes.
+
+             Solution:
+             We should have a prototype interface with clone method.
+             Each different class whose objects need to be cloned, must implement this prototype interface
+             and override the clone method. Meaning the cloning code or logic should be the part of the class
+             only, whose object we want to clone.
+             This way, issue with accessing the private attribute gets resolved and since the cloning logic is
+             inside the Class only, so client need not to be aware of the different attributes of that class.
+             Client would simply call the clone method and make the copy of the object while creating new object.
+
+# Singleton: It is used when we have to create only one instance of the object.
+             E.g DBConnection, Logger etc.
+             ==> We have four different ways to achieve this.
+             1. Eager Method
+             2. Lazy Method
+             3. Synchronized Method
+             4. Double locking Method - This is used widely in application
+
+             1. Eager initialization Singleton pattern: In this pattern, We restrict the object creation by making
+                the constructor of the class private and then we expose a method that another classes can call
+                to get the instance of that class and then We create a new object of that class
+                and assign it to a static variable(related to the class and not object) of that class.
+                It means, When the class is loaded the static variable also gets intialized with one instance on the class
+                So, called Eager intialization.
+
+             2. Lazy initialization: In this pattern, We again make the constructor private with one static variable
+                that holds one instance of the objects, but here the instance is created only( by exposing a method)
+                when it is required and not when the class is loaded. So called the Lazy initialization.
+             ==> Problem in Lazy intialization: It may give inconsistent result When more than one thread
+                 simultaniously try to create the object.
+
+             3. Synchronized Method: In this method, We make the getInstance method synchronised so, no two threads
+                can access the getInstance method simultaniously.
+                Problem in Synchronized method: It is very expensive, It is very expensive, 1000 threads trying to
+                access the getInstance method will create 1000 lock due to synchronized getInstance method.
+                In order to solve this, we use double locking method.
+
+             4. Double locking Method: It puts DbConn obj null check two times, so everytime a new threads comes in
+                Locking is not required.
+
+# Factory: It is used when all the object creation and its business logic, we need to keep at one place.
+           It has one Factory Class with a method which is taking the responsibility of creating the object based on client input.
+           In future, suppose any change happens, It will only change the business logic in ShapeFactory Class.
+           All the business logic of creating the objects are placed in only one ShapeFactory class.
+
+# Abstract Factory: This is nothing but factory of factory.
+
+# Builder Method: It is used when we want to create objects step by step.
+                  Explained in code with Student as actual product/object which we need to build step by step.
+                  This DP has two parts.
+                  1. Director: It orchestrate the steps as to in which order the steps to be followed to build the Home.
+                  2. Builder: It actually build the product following the steps defined in Director.
+
+                  ==> Problem with traditional approach of Object Creation:
+                  1. When an Object has too many attributes, The constructor becomes too heavy and large.
+                  2. Manier times, There are a few attributes of an object which are optional and on a very few
+                     attributes are mandatory to create Object. In this scenario, We end up having too many constructor
+                     with different singnature(with mandatory arg only) within the class, which again is not a good design
+                     and could lead to constructor congestion
+                  3. Suppose We need two different constructor for Object initialization with mandatory params,
+                     And each two different constructor is taking three different params but all of String type,
+                     In this case, Compiler would give error as no two different constructor can have same signature.
+                     This way, Object initialization becomes impossible.
+
+                  Solution: Builder DP solves above three problems, As we initialize object through another Builder objects
+                  with only required parameters step by step and finally calling the build method that returns us a complete
+                  new object(with only required attributes set to respective values) of that class.
+                  There is one disadvatage of Builder DP, It lead to duplicate codes in both Student class and StudentBuilder
+                  Abstract class.

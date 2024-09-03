@@ -1,0 +1,41 @@
+
+
+# Structural Design pattern: It is a way to arrange or combine different classes and objects to form a complex and bigger structure
+                             (or object) to solve a particular requirement.
+                             This basically means, We define here IS-A or HAS-A relation b/w different classes
+                             to form a bigger complex objects. This DP deals with different ways to do it efficiently.
+
+1. Decorator Pattern
+2. Proxy Pattern
+3. Composite Pattern
+4. Adapter Pattern
+5. Bridge Pattern
+6. Facade Pattern
+7. Flyweight Pattern
+
+
+# Decorator Pattern: This pattern help us to add more functionalities to existing object without changing its structure.
+                     When we dont use Decorator pattern then, in some case, due to too many type of an object,
+                     It may lead to class explosion.
+                     BaseClass: BasePizza
+                     There could be too many types of pizzas, each would extend BasePizza.(Cheese,mushroom, chicken,cheese+mushroom etc)
+                     It would result into Class Explosion.
+                     In order get rid of this bad design we use Decorator Pattern, Where we have IS-A and HAS-A relation both.
+                     Eg. BasePizza pizza = new Mushroom(new ExtraCheese(new FarmHouse())): This is called Decorator.
+
+# Proxy Pattern: This pattern help us provide the control access to the original object.
+
+# Composite Pattern: This pattern helps in scenarios where we have objects inside objects(tree like Structure)
+
+# Adapter Patter: This pattern acts as a bridge or intermediate between two incompatible interfaces.
+
+# Bridge Pattern: This pattern help us to decouple an abstraction from its implementation,
+                  so that two can vary independently.
+
+# Facade Pattern: This pattern helps to hide the system complexity from the client.
+                  eg: Expose only the required details to the client
+                  eg: Hide the System Complexity from the Client
+
+
+
+

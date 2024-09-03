@@ -1,0 +1,53 @@
+
+# Solid Principles
+1. Single Responsibility Principle
+2. Open for Extension and Closed for modification
+3. Liskov Substitution Principle
+4. Interface segregation
+5. Dependency Inversion
+
+# Advantages of following the Solid Principles:
+1. Help us to write better code
+2. Avoid duplicate code
+3. Easy to maintain
+4. Easy to understand
+5. Flexible Software
+6. Reduce Complexity
+
+# Single Responsibility Principle - It says, A class should have only one reason to change. A clss should have single responsibility.
+   e.g: Logger Class, DBConnection Class , Controller Class, Service Class, Repository Class
+=> Invoice class is not following the SRP, but InvoiceCalculation , InvoiceDao, InvociePrinter,
+   these three classes following the SRP.
+
+# Open for Extension and Closed for modification: A class should be open for extension but closed for modification.
+  A class which is already taking traffic, must not be changed rather extend it and make the changes in the new class
+  extending the earlier class.
+==> A new requirements came, which says save it to file as well.
+    InvoiceDao class is not following the OECMP though it fulfils the requirements.
+    But, With the help of IInvocieDao interface and FileInvoiceDao and DatabaseInvoiceDao class, We fulfils the
+    requirements following the OECMP.
+    Here the Classes, FileInvoiceDao and DatabaseInvoiceDao are following the OECMP using IInvocieDao interface
+
+# Liskov Substitution Principle: If Class B is subtype of Class A, Then we should be able to replace
+  Object A with B without breaking the behaviour of the program.
+  Meaning, Subclass should extend the capability of parent class and not narrow it down.
+==> In the LSP implementation, The ByCycle Class is not following the LSP principle coz, It has a mandatory method
+    to be overridden which is turnOnEngine() and ByCyle does not require it. So it has one useless method to be implemented.
+
+# Interface segregation: Interface should be in such a way that Client should not implement unneccessarry function
+  that do not require.
+==> The waiter class is implementing all the functions of the RestaurantEmployee interface,
+    But it does not require to implement washDishes and cookFood method as Waiter would only perform the task of
+    serving the customers, So this design does not follow ISP.
+    In order to achieve ISP, we need to segregate the interface.
+
+==> The WaiterNew class is now following the ISP as Interface has now been segregated and
+    This class is implementing only those methods that it requires.
+
+# Dependency Inversion: Class should depend on interface rather than a Concrete class.
+==> This Macbook class is not following the DIP as It is using the Concrete class to implement the MacBook Object
+    Lets say, Later on we want to initialize the Macbook object with bluetooth keyboard and mouse then
+    in that case we have to change the class.
+
+==> This MacbookNew class is following the DIP, as It has used the two objects keyboard and mouse as interface and
+    It can be used to create Macbook Objects with both WiredKeyboard and BluetoothKeyboard
