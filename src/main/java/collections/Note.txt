@@ -1,0 +1,12 @@
+
+# Collection: The root interface for all the collection types:
+
+# List: An ordered collection that can contain duplicate elemenst(ArrayList, LinkedList)
+
+# Set: A collection that cant contain duplicate elements(HashSet, TreeSet)
+
+# Queue: (PriorityList, LinkedList)
+
+# Deque: A double ended queue that allows insertion and removal from both the ends(ArrayDeque)
+
+# Map: An interface that represents a collection of key-value pair(HashMap, TreeMap)

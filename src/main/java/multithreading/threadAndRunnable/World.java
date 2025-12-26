@@ -1,0 +1,11 @@
+package multithreading.threadAndRunnable;
+
+public class World extends Thread {
+
+    @Override
+    public void run() {
+        for(int i = 10 ; i<10000 ; i++){
+            System.out.println("Other Thread " + Thread.currentThread().getName());
+        }
+    }
+}
