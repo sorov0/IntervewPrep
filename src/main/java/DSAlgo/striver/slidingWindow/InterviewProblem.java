@@ -22,8 +22,9 @@ Output: 4
         int maxLength = 0;
 
         for (int right = 0; right < s.length(); right++) {
-            count[s.charAt(right) - 'A']++;
-            maxCount = Math.max(maxCount, count[s.charAt(right) - 'A']);
+            int i = count[s.charAt(right) - 'A'];
+            i++;
+            maxCount = Math.max(maxCount, i);
 
             // If number of characters to change > k, shrink window
             if ((right - left + 1) - maxCount > k) {
