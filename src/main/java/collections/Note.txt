@@ -1,12 +1,75 @@
 
+
+# Iterable -> Collection -> [List, Set, Queue] (All Interface)
+
 # Collection: The root interface for all the collection types:
 
 # List: An ordered collection that can contain duplicate elemenst(ArrayList, LinkedList)
 
-# Set: A collection that cant contain duplicate elements(HashSet, TreeSet)
+# List -> [ArrayList, LinkedList - Not Synchronised], [Vector, Stack -> Synchronised and ThreadSafe],
+          CopyOnWriteArrayList(Better than LL and Vector)
+
+
+# Map: An interface that represents a collection of key-value pair(HashMap, TreeMap)
+
+# Map -> A Seperate Interface from Collection. [HashMap, HashTable, SortedMap, ConcurrentMap]
+# HashMap -> [LinkedHashMap, WeakHashMap, IdentityHashMap], Unordered, Allows one null key and multiple null values, Not synchronised
+# LinkedHashMap -> Insertion Order Maintained, Not Synchronised, LRUCache cache can be implemented Using LInkedHashMap
+# IdentityHashMap -> Uses reference equality (==) instead of equals() for key comparison, Not synchronized,
+                     Keys are considered equal only if they refer to the same object in memory
+
+
+# SortedMap -> TreeMap - entries are sorted based on Keys (Natural Ordering)
+# TreeMap -> Implements Sorted and Navigable map
+# Important Methods : firstKey(), lastKey(), headMap(key), tailMap(key), subMap(fromKey, toKey)
+# NavigableMap is an interface, t extends SortedMap, It is implemented by TreeMap.
+# Important Method: lowerKey(), cielingKey(), higherEntry(), descendingMap()
+
+
+# HashTable(LegacyMap) -> Synchronised, key or value cant be null, Legacy Class now replaced with ConcurrentHashMap
+                          Only LinkedList is used in case of Collision
+
+
+# ConcurrentHashMap ->
+        // Java 7 --> segment based locking --> 16 segments --> smaller hashmaps
+        // Only the segment being written to or read from is locked
+        // read: do not require locking unless there is a write operation happening on the same segment
+        // write: lock
+
+        // java 8 --> no segmentation
+        //        --> Compare-And-Swap approach --> no locking except resizing or collision
+        // Thread A last saw --> x = 45
+        // Thread A work --> x to 50
+        // if x is still 45, then change it to 50 else don't change and retry
+        // put --> index
+
+
+# EnumMap ->
+            • Specialized Map implementation for enum keys only
+            • Internally implemented using an array, making it faster and more memory-efficient than HashMap
+            • Keys are stored in natural order of enum declaration
+            • Does not allow null keys, but allows null values
+            • Not synchronized; not thread-safe
+            • Commonly used for fixed set of constants like states, types, or categories
+
+
+# ConcurrentSkipListMap ->
+            • Thread-safe, scalable, and non-blocking implementation of NavigableMap
+            • Internally based on a Skip List data structure
+            • Maintains sorted order of keys
+            • Supports concurrent access without locking the entire map
+            • Allows high concurrency for read and write operations
+            • Does not allow null keys or null values
+            • Suitable for concurrent sorted data like leaderboards, scheduling, and caches
+
+
+
+
+
+
+# Set: A collection that can't contain duplicate elements(HashSet, TreeSet)
+# Set -> HashSet, LinkedHashSet, TreeSet, EnumSet, ConcurrentSkipListSet, SortedSet, CopyOnWriteArraySet
 
 # Queue: (PriorityList, LinkedList)
 
 # Deque: A double ended queue that allows insertion and removal from both the ends(ArrayDeque)
-
-# Map: An interface that represents a collection of key-value pair(HashMap, TreeMap)

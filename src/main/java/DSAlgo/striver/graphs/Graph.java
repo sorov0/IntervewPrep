@@ -27,6 +27,36 @@ class Triplet{
 
 public class Graph {
 
+
+
+    // Print all possible paths from top left to bottom right of a mXm matrix
+    public static void getAllPathUtil(int[][] arr , int i , int j , int n , ArrayList<Integer> tmp , ArrayList<ArrayList<Integer> > res){
+
+        if(i>=n || j>=n) return;
+
+        if(i==n-1 && j==n-1){
+            tmp.add(arr[i][j]);
+            res.add(new ArrayList<Integer>(tmp));
+        }else{
+            tmp.add(arr[i][j]);
+            getAllPathUtil(arr , i+1 , j , n , tmp , res);
+            getAllPathUtil(arr , i , j+1 , n , tmp , res);
+        }
+        tmp.remove(tmp.size()-1);
+    }
+
+
+    public static ArrayList<ArrayList<Integer>> printAllPath(int[][] arr) {
+
+        ArrayList<Integer> tmp = new ArrayList<>();
+
+        ArrayList<ArrayList<Integer> > res = new ArrayList<>();
+        getAllPathUtil(arr , 0 , 0 , arr.length , tmp , res);
+
+        return res;
+    }
+
+
     // BFS Traversal
     // https://bit.ly/3bn84K8
     public ArrayList<Integer> bfsTraversal(ArrayList<ArrayList<Integer>> adj) {
@@ -326,9 +356,8 @@ public class Graph {
                     q.add(new Pair(it, node));
                     vis[it] = true;
                 }
-
                 // if adjacent node is visited and is not its own parent node
-                else if(par != it) return true;
+                else if(it != par) return true;
             }
         }
         return false;
@@ -361,11 +390,12 @@ public class Graph {
                 if(checkForCycleBFSForUGUtil(adj, i, vis))  return true;
             }
         }
+
         return false;
 
     }
 
-    // Distance of nearest cell having 1 | 0/1 Matrix
+    // Distance of the nearest cell having 1 | 0/1 Matrix
     public int[][] nearest0And1(int[][] grid) {
 
         int n = grid.length;
@@ -596,6 +626,196 @@ public class Graph {
         }
         return true;
     }
+
+
+    //
+    // Function to detect cycle in a directed graph.
+    private boolean dfsCheck(int node, ArrayList<ArrayList<Integer>> adj, int vis[], int pathVis[]) {
+        vis[node] = 1;
+        pathVis[node] = 1;
+
+        // traverse for adjacent nodes
+        for(int it : adj.get(node)) {
+            // when the node is not visited
+            if(vis[it] == 0) {
+                if(dfsCheck(it, adj, vis, pathVis) == true)
+                    return true;
+            }
+            // if the node has been previously visited, but it has to be visited on the same path
+            else if(pathVis[it] == 1) {
+                return true;
+            }
+        }
+        pathVis[node] = 0;
+        return false;
+    }
+    public boolean isCyclicGivenDirectedGraph(int V, ArrayList<ArrayList<Integer>> adj) {
+        int vis[] = new int[V];
+        int pathVis[] = new int[V];
+
+        for(int i = 0;i<V;i++) {
+            if(vis[i] == 0) {
+                if(dfsCheck(i, adj, vis, pathVis) == true) return true;
+            }
+        }
+        return false;
+    }
+
+
+
+    // Topologocal Sort in DAG (Directed Acyclic Graph)
+    void dfsTopoSort(int node, boolean[] vis, Stack<Integer> st, ArrayList<ArrayList<Integer>> graph){
+
+        vis[node] = true;
+        for(int it : graph.get(node)){
+            if(!vis[it]){
+                dfsTopoSort(it, vis, st, graph);
+            }
+            st.push(node);
+        }
+
+    }
+    int[] topoSort(int V, ArrayList<ArrayList<Integer>> graph){
+
+        boolean[] vis = new boolean[V];
+
+        Stack<Integer> st = new Stack<>();
+        for(int i = 0 ; i<V ; i++){
+            if(!vis[i]){
+                dfsTopoSort(i, vis, st, graph);
+            }
+        }
+
+        int ans[] = new int[V];
+        int i = 0;
+        while(!st.isEmpty()){
+            ans[i++] = st.peek();
+            st.pop();
+        }
+        return ans;
+
+    }
+
+
+    // Topo Sort using Kahn's Algorithm BFS
+    public ArrayList<Integer> topoSortBFS(int V, List<List<Integer>> adj) {
+        int[] inDegree = new int[V];
+        for (int i = 0; i < V; i++) {
+            for (int it : adj.get(i)) inDegree[it]++;
+        }
+
+        Queue<Integer> q = new LinkedList<>();
+        // Add the nodes with no in-degree to queue
+        for (int i = 0; i < V; i++) {
+            if (inDegree[i] == 0) q.add(i);
+        }
+
+        ArrayList<Integer> ans = new ArrayList<>();
+
+        // Until the queue is empty
+        while (!q.isEmpty()) {
+            int node = q.poll();
+            ans.add(node);
+            for (int it : adj.get(node)) {
+                // Decrement the in-degree
+                inDegree[it]--;
+
+                // Add the node to queue if n-degree becomes zero
+                if (inDegree[it] == 0) q.add(it);
+            }
+        }
+        return ans;
+    }
+
+    // Detect a Cycle in a Graph using TopoSort BFS(Kahn's Algo)
+    public boolean isCyclic(int V, List<List<Integer>> adj) {
+        ArrayList<Integer> toposort = topoSortBFS(V, adj);
+        if(toposort.size()== V) return false;
+        return true;
+    }
+
+
+    // Course Schedule I && II | Pre-requisite Tasks | Topological Sort
+    public boolean canFinish(int numCourses, int[][] prerequisites) {
+
+        List<List<Integer>> adj = new ArrayList<>();
+        int[] inDegree = new int[numCourses];
+
+        for (int i = 0; i < numCourses; i++) {
+            adj.add(new ArrayList<>());
+        }
+
+        for (int[] pre : prerequisites) {
+            int a = pre[0];
+            int b = pre[1];
+            adj.get(b).add(a);
+            inDegree[a]++;
+        }
+        Queue<Integer> q = new LinkedList<>();
+        for (int i = 0; i < numCourses; i++) {
+            if (inDegree[i] == 0) {
+                q.offer(i);
+            }
+        }
+        int count = 0;
+        while (!q.isEmpty()) {
+            int node = q.poll();
+            count++;
+            for (int nei : adj.get(node)) {
+                inDegree[nei]--;
+                if (inDegree[nei] == 0) {
+                    q.offer(nei);
+                }
+            }
+        }
+        return count == numCourses;
+    }
+
+
+    //
+    public List<Integer> eventualSafeNodes(int V, List<Integer>[] adj) {
+        List<Integer>[] adjRev = new List[V];
+        int[] indegree = new int[V];
+
+        // Initialize reverse adjacency list
+        for (int i = 0; i < V; i++) {
+            adjRev[i] = new ArrayList<>();
+        }
+
+        // Build the reverse graph and calculate indegrees
+        for (int i = 0; i < V; i++) {
+            for (int neighbor : adj[i]) {
+                adjRev[neighbor].add(i);  // Reverse the direction of edges
+                indegree[i]++;  // Increment indegree for the current node
+            }
+        }
+
+        Queue<Integer> q = new LinkedList<>();  // Queue to store nodes with no outgoing edges
+        List<Integer> safeNodes = new ArrayList<>();
+
+        // Add all nodes with 0 indegree to the queue
+        for (int i = 0; i < V; i++) {
+            if (indegree[i] == 0) {
+                q.offer(i);
+            }
+        }
+
+        // Process the queue to find all safe nodes
+        while (!q.isEmpty()) {
+            int node = q.poll();
+            safeNodes.add(node);  // This node is safe
+            for (int parent : adjRev[node]) {
+                indegree[parent]--;  // Decrease indegree of the parent nodes
+                if (indegree[parent] == 0) {
+                    q.offer(parent);  // If indegree becomes 0, it is a safe node
+                }
+            }
+        }
+
+        Collections.sort(safeNodes);  // Sort the safe nodes
+        return safeNodes;
+    }
+
 
 
     public static void main(String[] args) {
