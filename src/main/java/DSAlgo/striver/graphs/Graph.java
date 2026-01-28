@@ -1,5 +1,6 @@
 package DSAlgo.striver.graphs;
 
+
 import java.util.*;
 
 
@@ -25,9 +26,52 @@ class Triplet{
     }
 }
 
+class Employee{
+
+    int id;
+    String name;
+    int salary;
+    int reportingToId;
+
+    public Employee(int id, String name, int salary, int reportingToId) {
+        this.id = id;
+        this.name = name;
+        this.salary = salary;
+        this.reportingToId = reportingToId;
+    }
+}
+
 public class Graph {
 
 
+    // find the summation of the salaries of all the employee under a given employee
+    // including the salary of the given employee;
+
+    int findSummationOfSalary(int id, List<Employee> list){
+
+        int sum = 0;
+        Queue<Employee> q = new LinkedList<>();
+        for(Employee emp : list){
+            if(emp.id == id){
+                q.add(emp);
+                break;
+            }
+        }
+
+        while(!q.isEmpty()){
+
+            Employee emp = q.poll();
+            int salary = emp.salary;
+
+            for(Employee reportee : list){
+                if(reportee.reportingToId == emp.id){
+
+                }
+            }
+        }
+        return  0;
+
+    }
 
     // Print all possible paths from top left to bottom right of a mXm matrix
     public static void getAllPathUtil(int[][] arr , int i , int j , int n , ArrayList<Integer> tmp , ArrayList<ArrayList<Integer> > res){
@@ -485,6 +529,101 @@ public class Graph {
     }
 
 
+    // Pacific Atlantic Water Flow:
+
+    // flag == true: mark pacific ocean true
+    // flag == false: mark atlantic ocean true
+    void fillDFSPacificAtlanticOceanUtil(int row, int col, boolean vis[][], int[][] heights, int[] dr, int[] dc,
+                                         boolean flag, boolean pacific[][], boolean atlantic[][]){
+
+        int n = heights.length;
+        int m = heights[0].length;
+
+        vis[row][col] = true;
+        if (flag) pacific[row][col] = true;
+        else atlantic[row][col] = true;
+
+        for(int i = 0 ; i<4 ; i++){
+            int nrow = row + dr[i];
+            int ncol = col + dc[i];
+
+            if(!vis[nrow][ncol] && nrow >= 0 && nrow < n && ncol >= 0 && ncol < m
+            && heights[nrow][ncol] >= heights[row][col]){
+
+                fillDFSPacificAtlanticOceanUtil(nrow, ncol, vis, heights, dr, dc, flag, pacific, atlantic);
+            }
+        }
+    }
+
+    // Pacific Atlantic Water Flow
+    public void fillDFSPacificAtlanticOceanUtil(
+            int row, int col,
+            boolean[][] ocean,
+            int[][] heights,
+            int[] dr, int[] dc) {
+
+        int n = heights.length;
+        int m = heights[0].length;
+
+        ocean[row][col] = true;
+
+        for (int i = 0; i < 4; i++) {
+            int nrow = row + dr[i];
+            int ncol = col + dc[i];
+
+            if (nrow >= 0 && nrow < n &&
+                    ncol >= 0 && ncol < m &&
+                    !ocean[nrow][ncol] &&
+                    heights[nrow][ncol] >= heights[row][col]) {
+
+                fillDFSPacificAtlanticOceanUtil(
+                        nrow, ncol, ocean, heights, dr, dc);
+            }
+        }
+    }
+
+    public List<List<Integer>> pacificAtlantic(int[][] heights) {
+
+        List<List<Integer>> ans = new ArrayList<>();
+
+        int n = heights.length;
+        int m = heights[0].length;
+
+        int[] dr = {-1, 0, 1, 0};
+        int[] dc = {0, 1, 0, -1};
+
+        boolean[][] pacific = new boolean[n][m];
+        boolean[][] atlantic = new boolean[n][m];
+
+        // Pacific: left & top borders
+        for (int i = 0; i < n; i++) {
+            fillDFSPacificAtlanticOceanUtil(i, 0, pacific, heights, dr, dc);
+        }
+        for (int j = 0; j < m; j++) {
+            fillDFSPacificAtlanticOceanUtil(0, j, pacific, heights, dr, dc);
+        }
+
+        // Atlantic: right & bottom borders
+        for (int i = 0; i < n; i++) {
+            fillDFSPacificAtlanticOceanUtil(i, m - 1, atlantic, heights, dr, dc);
+        }
+        for (int j = 0; j < m; j++) {
+            fillDFSPacificAtlanticOceanUtil(n - 1, j, atlantic, heights, dr, dc);
+        }
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (pacific[i][j] && atlantic[i][j]) {
+                    ans.add(Arrays.asList(i, j));
+                }
+            }
+        }
+
+        return ans;
+    }
+
+
+
     // Number of Enclaves | Multi-source BFS
     int numberOfEnclaves(int[][] grid) {
 
@@ -602,11 +741,11 @@ public class Graph {
                                ArrayList<ArrayList<Integer>>adj){
 
         color[node] = nodeColor;
-        for(int it : adj.get(node)) {
-            if(color[it] == -1){
-                boolean res = isBipartiteDFSUtil(it, 1 - nodeColor, color, adj);
+        for(int nbr : adj.get(node)) {
+            if(color[nbr] == -1){
+                boolean res = isBipartiteDFSUtil(nbr, 1 - nodeColor, color, adj);
                 if(res == false) return false;
-            } else if (nodeColor != color[it]) {
+            } else if (nodeColor != color[nbr]) {
                 return false;
             }
         }
@@ -816,6 +955,235 @@ public class Graph {
         return safeNodes;
     }
 
+    // Alien Dictionary Function
+    // Topological Sort using Kahn's Algorithm
+    private List<Integer> topoSort(int V, List<List<Integer>> adj) {
+        int[] indegree = new int[V];
+
+        // Calculate indegree
+        for (int i = 0; i < V; i++) {
+            for (int neighbor : adj.get(i)) {
+                indegree[neighbor]++;
+            }
+        }
+
+        Queue<Integer> q = new LinkedList<>();
+        for (int i = 0; i < V; i++) {
+            if (indegree[i] == 0) {
+                q.add(i);
+            }
+        }
+
+        List<Integer> topo = new ArrayList<>();
+
+        while (!q.isEmpty()) {
+            int node = q.poll();
+            topo.add(node);
+
+            for (int neighbor : adj.get(node)) {
+                indegree[neighbor]--;
+                if (indegree[neighbor] == 0) {
+                    q.add(neighbor);
+                }
+            }
+        }
+        return topo;
+    }
+
+    // N: Number of Words
+    // K: First K letter from the starting of english alphabets
+    public String findOrder(String[] dict, int N, int K) {
+
+        List<List<Integer>> adj = new ArrayList<>();
+        for (int i = 0; i < K; i++) {
+            adj.add(new ArrayList<>());
+        }
+
+        // Build graph
+        for (int i = 0; i < N - 1; i++) {
+            String s1 = dict[i];
+            String s2 = dict[i + 1];
+
+            // ❗ Invalid prefix case
+            if (s1.length() > s2.length() && s1.startsWith(s2)) {
+                return ""; // No Topological sort required, Invalid sequence of letter.
+            }
+
+            int len = Math.min(s1.length(), s2.length());
+
+            for (int j = 0; j < len; j++) {
+                if (s1.charAt(j) != s2.charAt(j)) {
+                    int u = s1.charAt(j) - 'a';
+                    int v = s2.charAt(j) - 'a';
+
+                    // Avoid duplicate edges
+                    if (!adj.get(u).contains(v)) {
+                        adj.get(u).add(v);
+                    }
+                    break; // only first difference matters
+                }
+            }
+        }
+
+        // Topological sort
+        List<Integer> topo = topoSort(K, adj);
+
+        // ❗ Cycle check
+        if (topo.size() < K) {
+            return "";
+        }
+
+        // Convert to string
+        StringBuilder ans = new StringBuilder();
+        for (int node : topo) {
+            ans.append((char)(node + 'a'));
+        }
+
+        return ans.toString();
+    }
+
+
+    // Shortest Path in an undirected graph with unit edge weight
+    public int[] shortestPathUG(int V, int E, int[][] edges, int src) {
+
+        ArrayList<ArrayList<Integer>> adj = new ArrayList<>();
+        for(int i = 0 ; i<V ; i++){
+            adj.add(new ArrayList<>());
+        }
+
+        for(int i = 0 ; i<E ; i++){
+            adj.get(edges[i][0]).add(edges[i][1]);
+            adj.get(edges[i][1]).add(edges[i][0]);
+        }
+        int dis[] = new int[V];
+        Arrays.fill(dis, Integer.MAX_VALUE);
+        dis[src] = 0;
+
+        Queue<Integer> q = new LinkedList<>();
+        q.add(src);
+
+        while (!q.isEmpty()){
+            int node = q.poll();
+            for(int nbr : adj.get(node)){
+                if(dis[node] + 1 < dis[nbr]){
+                    dis[nbr] = dis[node] + 1;
+                    q.add(nbr);
+                }
+            }
+        }
+
+        // Prepare result, replacing infinity with -1
+        for (int i = 0; i < V; i++) {
+            if (dis[i] == Integer.MAX_VALUE) {
+                dis[i] = -1;
+            }
+        }
+
+        return dis;
+
+    }
+
+    // Shortest Path in directed Acyclic Graph with different weights
+
+    void topoSortDAGShortestPathUtil(int node, ArrayList<ArrayList<int[]>> adj, boolean[] vis, Stack<Integer> stack){
+        vis[node] = true;
+        for(int[] nbr : adj.get(node)){
+            if(!vis[nbr[0]]){
+                topoSortDAGShortestPathUtil(nbr[0], adj, vis, stack);
+            }
+        }
+        stack.push(node);
+    }
+    public int[] shortestPath(int V, int E, int[][] edges) {
+        ArrayList<ArrayList<int[]>> adj = new ArrayList<>();
+        for(int i = 0 ; i<V ; i++){
+            adj.add(new ArrayList<>());
+        }
+        for(int[] ele : edges){
+            int u = ele[0];
+            int v = ele[1];
+            int wt = ele[2];
+
+            adj.get(u).add(new int[]{v, wt});
+        }
+        boolean[] visited = new boolean[V];
+        Stack<Integer> stack = new Stack<>();
+
+        for (int i = 0; i < V; i++) {
+            if (!visited[i]) {
+                topoSortDAGShortestPathUtil(i, adj, visited, stack);
+            }
+        }
+
+        int[] dist = new int[V];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+
+        // Distance to source (0) is 0
+        dist[0] = 0;
+
+        while (!stack.isEmpty()) {
+            int node = stack.pop();
+            // If the node is reachable
+            if (dist[node] != Integer.MAX_VALUE) {
+
+                for (int[] neighbor : adj.get(node)) {
+                    int v = neighbor[0];
+                    int wt = neighbor[1];
+
+                    // Relax the edge
+                    if (dist[node] + wt < dist[v]) {
+                        dist[v] = dist[node] + wt;
+                    }
+                }
+            }
+        }
+        // Replace all unreachable nodes with -1
+        for (int i = 0; i < V; i++) {
+            if (dist[i] == Integer.MAX_VALUE) {
+                dist[i] = -1;
+            }
+        }
+        return dist;
+    }
+
+    // Dijsktra's algorithm (Shortest Path from a given node to each node) - returns a dist array
+    public int[] dijkstra(int V, ArrayList<int[]>[] adj, int S) {
+
+        PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> a[0] - b[0]);
+        int[] dis = new int[V];
+        Arrays.fill(dis, Integer.MAX_VALUE);
+
+        dis[0] = 0;
+        pq.add(new int[]{0, S});
+
+        while(!pq.isEmpty()){
+
+            int distNode = pq.peek()[0];
+            int node = pq.peek()[1];
+            pq.poll();
+
+            for(int[] edge : adj[node]){
+
+                int wt = edge[0];
+                int nbr = edge[1];
+
+                if(distNode + wt < dis[nbr]){
+                    dis[nbr] = distNode + wt;
+                    pq.add(new int[]{dis[nbr], nbr});
+                }
+            }
+        }
+        return dis;
+    }
+
+
+    // Path with minimum efforts
+    public int minCostPath(int[][] mat) {
+
+        return 0;
+
+
+    }
 
 
     public static void main(String[] args) {

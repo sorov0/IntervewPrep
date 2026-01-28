@@ -122,7 +122,6 @@ public class Easy {
 
     // RotateArrayByKElement
     // https://leetcode.com/problems/rotate-array/description/
-
     static void leftRotateByKEle(ArrayList<Integer> arr, int k){
 
         k = k % arr.size();
@@ -131,6 +130,7 @@ public class Easy {
         Collections.reverse(arr);
 
     }
+
     public static void RotateToLeft(int[] arr, int n, int k) {
 
         if (n == 0) return;
@@ -151,7 +151,6 @@ public class Easy {
 
     // Move All zeroes to the end of the Array
     // https://leetcode.com/problems/move-zeroes/description/
-
     static void moveZerosToEnd(ArrayList<Integer> arr){
 
         int j = -1;

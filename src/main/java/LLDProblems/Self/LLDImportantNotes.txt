@@ -1,0 +1,672 @@
+A master-level guide on how to think about any LLD question, how to choose classes, decide attributes,
+design methods, and build clean, extensible, SOLID LLDs — the same way we built Parking Lot,
+ BookMyShow, and Hotel Booking System.
+
+Everything is broken down into thumb rules, intuitions, patterns, and repeatable steps.
+
+⭐ 1. FIRST PRINCIPLE — “THINK IN NOUNS FIRST, VERBS LATER”
+
+When you read the requirement:
+
+👉 Extract NOUNS → classes
+
+Examples:
+Parking Lot → Vehicle, ParkingSlot, Ticket, ParkingLot
+BookMyShow → Movie, Cinema, City, Show
+Hotel Booking → City, Hotel, RoomType, PhysicalRoom, Booking
+
+👉 Extract VERBS → methods
+
+Examples:
+
+bookTicket(), cancelBooking()
+
+parkVehicle(), unparkVehicle()
+
+searchRooms(), lockRoom()
+
+This is always Step 1.
+
+⭐ 2. THINK LIKE A REAL WORLD SYSTEM → “Mirror the domain”
+
+Intuition:
+
+If it exists physically → class
+If it exists conceptually → class
+If it changes → put logic into a manager/service
+
+
+Examples:
+
+Parking Slot exists physically → class
+
+Room Variant exists conceptually → class
+
+Booking logic changes → BookingManager (NOT inside Booking)
+
+Payment logic changes → PaymentService (NOT inside Payment)
+
+Why? SRP + extensibility.
+
+⭐ 3. THE GOLDEN TRIAD (always design these 3 sets of classes)**
+(A) Entities (Models) → Only DATA
+
+No business logic
+
+Only fields & constructors
+
+Like we did in Part 1 of every design
+
+Examples:
+Hotel, PhysicalRoom, RoomVariant, Booking, Payment
+
+(B) Managers / Services → All LOGIC
+
+These correspond to real-world behavior.
+
+BookingManager
+
+PaymentService
+
+InventoryService
+
+CheckInManager
+
+ParkingLotManager
+
+ShowManager
+
+They take entities and perform operations.
+
+Thumb Rule:
+
+"If it does work → service.
+If it stores state → entity."
+
+(C) Helpers / Patterns → Strategy, Factory, Singleton
+
+Used when changeability is expected.
+
+Examples:
+
+PricingStrategy → Strategy Pattern
+
+PaymentGateway → Strategy
+
+PaymentGatewayFactory → Factory
+
+RoomLockManager → Singleton
+
+⭐ 4. DON’T PUT LOGIC INSIDE ENTITIES
+
+This is the most common beginner mistake.
+
+❌ Booking.confirm()
+✔ BookingManager.confirmBooking()
+
+❌ Room.isAvailable()
+✔ InventoryService.checkAvailability()
+
+Why?
+
+Entities = stable
+
+Services = flexible
+
+Always follows SRP + OCP
+
+⭐ 5. ALWAYS IDENTIFY “HIGH-VARIATION” POINTS → use Strategy
+
+Where logic will change often?
+
+Pricing rules → Strategy
+
+Payment gateways → Strategy
+
+Seat allocation rules → Strategy
+
+Sorting & filtering → Strategy
+
+LLD interviewers LOVE this.
+
+⭐ 6. USE FACTORY WHEN CLIENT SHOULDN’T KNOW IMPLEMENTATION
+
+Examples:
+
+PaymentGatewayFactory.getGateway(PaymentMode mode)
+PricingStrategyFactory.getStrategy(hotel)
+
+
+This removes switch-case from business logic.
+
+⭐ 7. USE SINGLETON FOR GLOBAL STATES
+
+Examples:
+
+ParkingLot instance
+
+SeatLockManager / RoomLockManager
+
+DataStore for in-memory data (like BMS)
+
+Rules for Singleton:
+
+Global
+
+Shared
+
+One per system
+
+Needs centralized synchronization
+
+⭐ 8. THINK IN TERMS OF SYSTEM FLOWS (ALWAYS WRITE THE FLOW FIRST)
+
+Always write:
+
+Search flow
+
+Booking flow
+
+Payment flow
+
+Check-in flow
+
+Cancel/Refund flow
+
+Then derive classes & methods directly.
+
+⭐ 9. DECIDE ATTRIBUTES BASED ON “WHAT THE OBJECT MUST KNOW”
+
+Use the 3-question rule:
+
+Q1: What identity must it store?
+
+id, name, type, cityId, hotelId
+
+Q2: What state must it track?
+
+Booking status
+
+RoomStatus
+
+PaymentStatus
+
+Booked date slots
+
+Q3: What relationships must it hold?
+
+Hotel has rooms
+
+Room has variants
+
+Booking has BookingRooms
+
+City has Hotels
+
+ParkingLot has Floors
+
+If it needs to own something → collection
+If it needs to reference something → id
+
+⭐ 10. METHODS MUST BE VERBS + ACTIONABLE
+
+Examples:
+
+createBooking()
+cancelBooking()
+confirmBooking()
+searchRooms()
+lockRoom()
+makePayment()
+checkIn()
+checkOut()
+
+
+Not:
+
+❌ bookingCreation()
+❌ roomHelper()
+
+⭐ 11. THINK ABOUT CONCURRENCY EARLY
+
+Every booking system needs:
+
+Lock manager
+
+Atomic operations
+
+Prevent double-booking
+
+Strategies:
+
+Singleton locking
+
+synchronized blocks
+
+Lock room BEFORE confirming booking
+
+Release lock on cancel
+
+This is universally expected in LLD interviews.
+
+⭐ 12. ALWAYS ADD EVENT HANDLING IF NOTIFICATIONS EXIST
+
+Use Observer Pattern.
+
+BookingConfirmedEvent
+
+PaymentSuccessEvent
+
+CheckInEvent
+
+Listeners:
+
+EmailNotificationService
+
+SMSNotificationService
+
+⭐ 13. ALWAYS WRITE A SIMPLE RUNNER / MAIN CLASS
+
+This proves your system is usable.
+
+Like the Runner in:
+
+Parking Lot
+
+BookMyShow
+
+HotelBooking
+
+Interviewer loves that.
+
+⭐ 14. DESIGN FOR EXTENSIBILITY, NOT FEATURES
+
+Ask:
+
+“If tomorrow I add new X, will I break existing code?”
+
+New RoomType → should NOT break anything
+
+New PaymentMode → just add new gateway class
+
+New PricingRule → add a new strategy
+
+New Notification → add a subscriber
+
+This is the core of OCP (Open Closed Principle).
+
+⭐ 15. ALWAYS THINK IN LAYERS
+
+Your LLD should conceptually have:
+
+Models → Services → Helpers → Main Runner
+
+
+This matches real world:
+
+Entities → Business Logic → Infrastructure → API Layer
+
+⭐ 16. FOLLOW THE “RULE OF 3” WHEN CHOOSING PATTERNS
+
+Use Strategy/Factory/Observer ONLY IF:
+
+You see 3 or more variations OR
+
+You anticipate future changes
+
+Example:
+
+1 payment method? No strategy
+
+3+ payment methods? YES strategy
+
+⭐ 17. PREDICT INTERVIEWER FOLLOW-UP QUESTIONS
+
+Every LLD interview ends with:
+
+"How do you scale search?”
+
+"How do you handle concurrency?”
+
+"How do you make it extensible?”
+
+"How do you integrate payment?”
+
+"How do you design notifications?”
+
+Design your LLD so you already have answers baked in.
+
+⭐ 18. KEEP CLASS COUNT BETWEEN 10–25
+
+More = over-engineered
+Less = under-designed
+
+Parking Lot: ~12 classes
+BookMyShow: ~20 classes
+Hotel Booking: ~30 classes
+
+This is the sweet spot.
+
+⭐ 19. NEVER MIX CONTROLLERS / SERVICES / MODELS IN LLD
+
+LLD interview ≠ real project
+They want the core domain, not API.
+
+⭐ 20. ALWAYS EXPLAIN WHY
+
+LLD interview is 50% design, 50% justification.
+
+Explain:
+
+Why you created a class
+
+Why this attribute lives here
+
+Why logic is in a service
+
+Why you used Strategy
+
+Why room-lock needed a Singleton
+
+Why concurrency matters
+
+The “why” is more important than the classes themselves.
+
+🎯 FINAL 10-LINE SUMMARY (Print this before any LLD interview)
+
+1️⃣ Extract nouns → classes
+2️⃣ Extract verbs → methods
+3️⃣ Entities hold data, services hold logic
+4️⃣ Use Strategy/Factory for changeable components
+5️⃣ Use Singleton for global shared states
+6️⃣ Never put business logic inside entities
+7️⃣ Design flows first → classes after
+8️⃣ Always handle concurrency
+9️⃣ Always design for extensibility
+🔟 Build a simple Runner to demonstrate the whole flow
+
+
+=========================================================================================================================
+
+
+
+🧠 FULL 1-PAGE LLD CHEAT SHEET (PRINT THIS BEFORE INTERVIEW)
+⭐ 1. The Golden Rule:
+"Identify NOUNS → classes, VERBS → methods."
+⭐ 2. Class Identification Framework
+
+Every LLD has exactly these 4 categories of classes:
+
+A) Entities (Data classes – NO logic)
+
+Hotel
+
+Room
+
+Booking
+
+Ticket
+
+Vehicle
+
+Store only state: ID, name, relationships, attributes.
+
+B) Managers / Services (Business Logic)
+
+BookingManager
+
+ParkingLotManager
+
+InventoryService
+
+PaymentService
+
+All behaviors go here.
+
+C) Helper Components (Patterns)
+
+Use when behavior changes:
+
+PricingStrategy (Strategy)
+
+PaymentGateway (Strategy)
+
+GatewayFactory (Factory)
+
+LockManager (Singleton)
+
+EventBus (Observer)
+
+D) Data Container
+
+DataStore (like BMSDatabase or in-memory map)
+
+Holds collections of all entities
+
+⭐ 3. Attribute Identification Rules
+
+For each class, ask:
+
+✔ Identity → What uniquely identifies it?
+id, name, typeId, roomId, movieId
+
+✔ State → What changes over time?
+status, bookedSlots, availability, rating
+
+✔ Relationships → What does it “own”?
+Hotel → Rooms
+City → Hotels
+Booking → BookingRooms
+
+✔ Metadata → What does it need to display?
+price, duration, rating
+
+⭐ 4. Method Identification Rules
+Should be:
+
+A verb
+
+Belong to a manager/service (NOT entity)
+
+Examples:
+
+searchRooms()
+createBooking()
+confirmBooking()
+makePayment()
+assignSlot()
+lockRoom()
+
+⭐ 5. ALWAYS Address These 5 Areas (Interview gold)
+
+Search/Query design
+
+State transitions (pending → confirmed → completed)
+
+Concurrency control
+
+Extensibility (Strategy, Factory)
+
+Notifications (Observer)
+
+⭐ 6. 6 Must-Use Design Patterns in LLD
+
+Singleton → LockManager, ParkingLot
+
+Strategy → Pricing, Payment
+
+Factory → PaymentGatewayFactory
+
+Observer → Notifications
+
+Builder → Optional for complex objects
+
+Template Method → Optional for workflows
+
+⭐ 7. Concurrency Guidelines
+
+Lock the resource before creating booking
+
+Unlock only on cancel/failure
+
+Use synchronized / mutex in LLD
+
+Demonstrate parallel booking scenario
+
+⭐ 8. Extensibility / Future-Proofing
+
+Ask yourself:
+
+“If tomorrow a new feature comes, where would I add it?”
+
+If answer is: “Modify old classes” → bad LLD
+If answer is: “Add new class implementing an interface” → great LLD
+
+⭐ 9. Architecture Skeleton You Must Always Use
++----------------------+        +----------------------+
+|      Entities        | -----> |     DataStore        |
++----------------------+        +----------------------+
+|  Pure data classes   |        | Global Singleton     |
++----------------------+        +----------------------+
+
++----------------------+        +----------------------+
+|  Services/Managers   | <----> |  Helper Components   |
++----------------------+        +----------------------+
+|  All business logic  |        | Strategy/Factory/etc |
++----------------------+        +----------------------+
+
+⭐ 10. Runner Class
+
+Always write a simple runner demonstrating:
+
+Create data
+
+Search
+
+Book
+
+Pay
+
+Confirm
+
+Check-in
+
+Check-out
+
+This proves your LLD is usable.
+
+🧠 END OF 1-PAGE LLD CHEAT SHEET
+🧩 3-STEP LLD BRAINSTORMING FRAMEWORK
+
+Use this whenever interviewer gives ANY LLD problem.
+
+STEP 1 — Extract Domain Concepts
+
+Ask yourself:
+
+✔ What real-world objects exist? (Nouns → Entities)
+✔ What actions exist? (Verbs → Methods)
+✔ What are relationships between entities?
+✔ What lifecycle/states exist?
+
+Example:
+Hotel Booking → City, Hotel, RoomType, PhysicalRoom, Booking, Payment
+
+STEP 2 — Organize into 4 Layers
+
+Always:
+
+Layer 1 → Entities
+Layer 2 → DataStore
+Layer 3 → Services
+Layer 4 → Helpers (Strategy/Factory/Lock/Observer)
+
+This structure ALWAYS works.
+
+STEP 3 — Think about Flows & Constraints
+
+For each feature:
+
+✔ Search flow
+✔ Booking flow
+✔ Payment flow
+✔ Notification flow
+✔ Cancellation flow
+
+Then apply:
+
+Concurrency
+
+Validation
+
+Exceptions
+
+Extensibility
+
+This guarantees completeness.
+
+🔥 SUPERPOWER TIP:
+
+“If you can design one booking system well, you can design all LLD systems.”
+ParkingLot, BMS, HotelBooking are identical patterns.
+
+🚀 Template to design ANY LLD in 5 minutes
+
+Use this template in your head or write it on paper:
+
+1. Identify Entities
+Class A
+  - attributes
+Class B
+  - attributes
+Class C
+  - attributes
+
+2. Identify Managers/Services
+ManagerA
+  methods → (action verbs)
+ManagerB
+  methods
+
+3. Add Patterns for Extensibility
+
+Choose based on volatility:
+
+Strategy:
+    Interface XStrategy
+    Impl StrategyA
+    Impl StrategyB
+
+Factory:
+    Class XFactory.get(type)
+
+Singleton:
+    LockManager
+    DataStore
+
+Observer:
+    EventBus
+
+4. Model State Transitions
+enum Status { … }
+
+5. Model Relationships
+A has list of B
+B refers to A via id
+
+6. Handle Concurrency
+LockManager.lock()
+LockManager.unlock()
+
+7. Write 5-key Flows
+search()
+book()
+pay()
+confirm()
+cancel()
+
+8. Write a Runner (Main Class)
+
+Demonstrate the flow.
+
+🎯 You're now officially LLD-ready for ANY interview.

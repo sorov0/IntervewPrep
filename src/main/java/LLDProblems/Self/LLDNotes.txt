@@ -1,0 +1,66 @@
+
+
+==========================================
+✅ PART 4 — THUMB RULES TO DESIGN ANY LLD
+==========================================
+
+Use these always:
+
+⭐ 1. Identify Key Entities (Nouns)
+
+From requirements → extract nouns:
+
+Example: ParkingLot, Floor, Spot, Ticket…
+
+⭐ 2. Separate Behavior into Managers
+
+Never overload entity classes.
+Business logic lives in Managers (ParkingSpotManager, PriceManager).
+
+⭐ 3. For all variable behavior → use Strategy Pattern
+
+Parking strategy
+
+Pricing strategy
+
+Payment strategy
+
+⭐ 4. Use SRP (Single Responsibility Principle)
+
+Each class should have exactly one reason to change.
+
+⭐ 5. Concurrency → handle at the object that mutates
+
+ParkingSpot must lock itself.
+ParkingLot should NOT lock the entire system.
+
+⭐ 6. Keep Aggregates as Source of Truth
+
+ParkingLot stores:
+
+All floors
+
+All active tickets
+
+⭐ 7. Use Factory or Builder for object creation
+
+Optional but recommended for gate creation / strategies.
+
+⭐ 8. Prefer Composition over Inheritance
+
+VIP-first strategy is “plugged in”, not subclassed.
+
+⭐ 9. Expose only workflows through Facade
+
+ParkingLot exposes:
+
+enter()
+
+exit()
+
+calculateAmount()
+
+⭐ 10. Admin must always be separate
+
+Every system grows.
+Admin creates floors/spots separately.

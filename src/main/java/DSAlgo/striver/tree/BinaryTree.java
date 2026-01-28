@@ -1,8 +1,6 @@
 package DSAlgo.striver.tree;
 
 
-import sun.awt.image.ImageWatched;
-
 import java.util.*;
 
 class Node {
@@ -201,9 +199,42 @@ public class BinaryTree {
                 if(node.right != null) q.add(node.right);
             }
             res.add(tmp);
+            leftToRight = !leftToRight; // 🔑 toggle direction
         }
         return res;
 
+    }
+
+    List<List<Integer>> zigzagTraversalOptimized(Node root) {
+
+        List<List<Integer>> res = new ArrayList<>();
+        if (root == null) return res;
+
+        Queue<Node> q = new LinkedList<>();
+        q.add(root);
+
+        boolean leftToRight = true;
+
+        while (!q.isEmpty()) {
+
+            int size = q.size();
+            Integer[] level = new Integer[size]; // Array instead of List is more suitable here for o(1) complexity
+
+            for (int i = 0; i < size; i++) {
+
+                Node node = q.poll();
+                int index = leftToRight ? i : size - 1 - i;
+                level[index] = node.data;
+
+                if (node.left != null) q.add(node.left);
+                if (node.right != null) q.add(node.right);
+            }
+
+            res.add(Arrays.asList(level));
+            leftToRight = !leftToRight; // 🔑 toggle direction
+        }
+
+        return res;
     }
 
     public static List<Integer> diagonalTraversal(Node root) {
