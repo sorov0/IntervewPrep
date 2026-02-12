@@ -1,38 +1,33 @@
 package LLDProblems.Self.HotelBookingSystem;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
 
 class InventoryService {
 
     DataStore db = DataStore.getInstance();
-    RoomLockManager lockManager = RoomLockManager.getInstance();
 
-    /**
-     * Returns all available physical rooms in a city for the given date range.
-     */
-    public List<PhysicalRoom> searchAvailableRooms(String cityId, DateRange stay) {
-
-        City city = db.cities.get(cityId);
-        List<PhysicalRoom> available = new ArrayList<>();
-
-        for (Hotel hotel : city.hotels) {
-            for (PhysicalRoom room : hotel.physicalRooms) {
-
-                if (lockManager.isLocked(room.roomId)) continue;
-
-                boolean free = true;
-
-                for (DateRange slot : room.bookedSlots) {
-                    if (slot.overlaps(stay)) {
-                        free = false;
-                        break;
-                    }
-                }
-
-                if (free) available.add(room);
-            }
+    boolean checkAvailability(int roomTypeId, LocalDate checkIn, LocalDate checkOut, int qty) {
+        for (LocalDate d = checkIn; !d.isAfter(checkOut.minusDays(1)); d = d.plusDays(1)) {
+            RoomInventory inv = db.inventories.get(roomTypeId * 10000 + d.hashCode());
+            if (inv == null || inv.availableCount < qty) return false;
         }
-        return available;
+        return true;
+    }
+
+    void reduceInventory(int roomTypeId, LocalDate checkIn, LocalDate checkOut, int qty) {
+        for (LocalDate d = checkIn; !d.isAfter(checkOut.minusDays(1)); d = d.plusDays(1)) {
+            RoomInventory inv = db.inventories.get(roomTypeId * 10000 + d.hashCode());
+            inv.availableCount -= qty;
+            inv.bookedCount += qty;
+        }
+    }
+
+    void increaseInventory(int roomTypeId, LocalDate checkIn, LocalDate checkOut, int qty) {
+        for (LocalDate d = checkIn; !d.isAfter(checkOut.minusDays(1)); d = d.plusDays(1)) {
+            RoomInventory inv = db.inventories.get(roomTypeId * 10000 + d.hashCode());
+            inv.availableCount += qty;
+            inv.bookedCount -= qty;
+        }
     }
 }
+

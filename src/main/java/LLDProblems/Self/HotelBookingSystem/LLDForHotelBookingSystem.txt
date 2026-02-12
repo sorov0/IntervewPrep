@@ -1,0 +1,294 @@
+
+
+HOTEL BOOKING SYSTEM – Requirements
+
+// Search hotels by: City, Date range (check-in, check-out),Room type,Price range,Amenities
+
+// View hotel : detailsHotel info, Room types,Photos,Ratings
+
+// Check availability
+
+// Room locking (Concurrency control)
+
+// Create Booking (multi-room booking supported)
+
+// Apply Pricing : Base price , Seasonal pricing, Surge pricing (weekend, holidays), Coupon codes (optional)
+
+// Payment : Multiple payment gateways, Payment status management
+
+// Booking Confirmation
+
+// Email/SMS Notifications
+
+// Modify/Cancel booking
+
+// Check-in and Check-out flow
+
+
+================================================================
+
+⭐ 2. Major Flows (VERY IMPORTANT FOR LLD)
+
+Every LLD must start from flows.
+Classes & methods come from these flows.
+
+🔍 A. Search Flow
+
+User selects city + dates.
+
+System selects eligible hotels.
+
+For each hotel → check room availability.
+
+Apply pricing (strategy).
+
+Show available room types & price.
+
+🧳 B. Booking Flow
+
+User chooses:
+
+Hotel
+
+Room type(s)
+
+Quantity
+
+Dates
+
+System locks rooms (concurrency).
+
+Create a tentative booking (status = PENDING).
+
+💳 C. Payment Flow
+
+Choose payment method.
+
+Call payment gateway.
+
+Update payment status.
+
+If success → confirm booking.
+
+If failure → release room locks.
+
+🟩 D. Booking Confirmation Flow
+
+After payment:
+
+Update booking status → CONFIRMED
+
+Generate confirmation number
+
+Send notifications
+
+🟥 E. Cancellation Flow
+
+Validate cancellation rules.
+
+Update booking status → CANCELLED.
+
+Release locked/allocated rooms.
+
+Initiate refund (if applicable).
+
+🏨 F. Check-in Flow
+
+Validate booking.
+
+Allocate physical rooms.
+
+Mark booking as CHECKED_IN.
+
+🏁 G. Check-out Flow
+
+Update booking status → COMPLETED.
+
+Free physical rooms.
+
+
+============================================
+
+
+⭐ 3. Actors
+
+Guest / Customer
+
+Admin (hotel owner)
+
+System (automated workflows)
+
+⭐ 4. Functional Requirements
+🔹 Hotel Management
+
+Add hotel
+
+Add room types
+
+Add physical rooms
+
+Room count handling
+
+🔹 Inventory Management
+
+Manage availability
+
+Manage room locks
+
+Prevent double booking
+
+🔹 Booking Management
+
+Create / cancel / update
+
+Booking lifecycle management
+
+🔹 Pricing Management
+
+Base price
+
+Seasonal price
+
+Weekend price
+
+Dynamic pricing
+
+Coupons (optional)
+
+🔹 Payment Handling
+
+Multi-gateway (Razorpay, Stripe, PayPal)
+
+Retries
+
+Failed payments
+
+Refunds
+
+🔹 Notification
+
+Email
+
+SMS
+
+Webhooks (optional)
+
+
+==========================================
+
+This is one of the MOST important parts of LLD.
+
+SEARCH → LOCK → PENDING BOOKING → PAYMENT INITIATED
+→ PAYMENT_SUCCESS → CONFIRMED
+→ CHECK-IN → CHECK-OUT → COMPLETED
+→ CANCELLATION (at any pending/confirmed stage)
+
+Statuses:
+
+PENDING
+
+CONFIRMED
+
+CANCELLED
+
+FAILED
+
+CHECKED_IN
+
+COMPLETED
+
+
+========================================================
+
+8. High Variation Points (Patterns Required)
+
+Based on your rule: Use Strategy wherever logic changes often.
+
+These will definitely be Strategy:
+
+PricingStrategy
+
+Base pricing
+
+Seasonal pricing
+
+Weekend pricing
+
+Surge pricing
+
+PaymentGateway
+
+Razorpay
+
+Stripe
+
+PayPal
+
+These require Factory:
+
+PaymentGatewayFactory
+
+PricingStrategyFactory
+
+Singleton:
+
+RoomLockManager
+
+Database / DataStore
+
+Observer:
+
+Notification system
+
+
+========================================================================================================================
+
+LLD in making:
+
+// Key Objects(Noun)
+
+# Entities :
+City, Hotels, RoomType, PhysicalRoom, RoomInventory (per date or Date-wise availability),
+Booking, BookingRoom (line items inside booking), Payment, User
+
+# Managers (Logic)
+SearchService,BookingManager,InventoryService,RoomLockManager,PaymentService,NotificationService,CheckInManager
+
+# Helpers/Patterns :
+PricingStrategy, PricingStrategyFactory,  PaymentGateway,  PaymentGatewayFactory,  EventBus (Observer),  DataStore (Singleton)
+
+
+# Supporting Entities : Address, Amenities, Review
+
+# Enums: RoomStatus,BookingStatus,PaymentStatus,PaymentMode
+
+
+⭐ 10. API Surface (Methods Identified from Verbs)
+
+SearchService : searchHotels()getAvailableRooms()
+
+BookingManager : createBooking(),confirmBooking(),cancelBooking()
+
+InventoryService : checkAvailability(),reserveRooms(),releaseRooms()
+
+RoomLockManager : lockRooms(),unlockRooms()
+
+PaymentService : initiatePayment(),verifyPayment()
+
+PricingStrategy : calculatePrice(),
+
+CheckInManager : checkIn(),checkOut()
+
+
+11. Data Store Structure
+
+We will store everything in a simple in-memory DB for LLD:
+
+cities
+hotelsByCity
+roomTypesByHotel
+physicalRoomsByRoomType
+inventories
+bookings
+payments
+locks

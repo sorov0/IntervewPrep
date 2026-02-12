@@ -129,6 +129,7 @@ class Movie {
 
 
 class Show {
+
     private final String showId;
     private final Movie movie;
     private final Screen screen;
@@ -172,6 +173,7 @@ class Show {
 }
 
 class ShowSeat {
+
     private final String id;
     private final Seat seat;
     private final Show show;

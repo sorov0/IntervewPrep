@@ -1,101 +1,93 @@
 package LLDProblems.Self.HotelBookingSystem;
 
-// ============================================================================
-// 5. BOOKING MANAGER — Main Booking Logic
-// ============================================================================
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.util.Map;
-import java.util.UUID;
+class BookingManager {
 
-class BookingService {
+    DataStore db = DataStore.getInstance();
+    InventoryService inventoryService = new InventoryService();
+    RoomLockManager lockManager = RoomLockManager.getInstance();
+    PricingService pricingService = new PricingService();
 
-    private DataStore db = DataStore.getInstance();
-    private RoomLockManager lock = RoomLockManager.getInstance();
-    private PricingStrategyFactory pricingFactory = new PricingStrategyFactory();
+    Booking createBooking(int userId, int hotelId,
+                          List<RoomRequest> roomRequests,
+                          LocalDate checkIn, LocalDate checkOut) {
 
-    /**
-     * Creates a PENDING booking.
-     * Locks rooms to prevent parallel booking.
-     */
-    public Booking createBooking(
-            String userId,
-            String cityId,
-            String hotelId,
-            DateRange stay,
-            Map<String, String> roomSelections // roomId -> variantId
-    ) {
-
-        Booking booking = new Booking();
-        booking.bookingId = UUID.randomUUID().toString();
-        booking.userId = userId;
-        booking.cityId = cityId;
-        booking.hotelId = hotelId;
-        booking.stay = stay;
-        booking.status = BookingStatus.PENDING;
-
-        Hotel hotel = db.hotels.get(hotelId);
-        PricingStrategy strategy = pricingFactory.getStrategy(hotel);
-
-        // Lock rooms first
-        for (String roomId : roomSelections.keySet()) {
-            boolean locked = lock.lockRoom(roomId, userId);
-            if (!locked)
-                throw new RuntimeException("Room already locked: " + roomId);
+        // 1. Check inventory
+        for (RoomRequest rr : roomRequests) {
+            if (!inventoryService.checkAvailability(rr.roomTypeId, checkIn, checkOut, rr.quantity))
+                throw new RuntimeException("Room not available");
         }
 
-        // Add BookingRoom entries
-        for (Map.Entry<String, String> entry : roomSelections.entrySet()) {
+        // 2. Lock rooms
+        for (RoomRequest rr : roomRequests) {
+            boolean locked = lockManager.lockRoomType(rr.roomTypeId, checkIn, checkOut,
+                    rr.quantity, userId);
+            if (!locked) throw new RuntimeException("Lock failed");
+        }
 
-            String roomId = entry.getKey();
-            String variantId = entry.getValue();
+        // 3. Create Booking
+        Booking b = new Booking();
+        b.bookingId = db.bookings.size() + 1;
+        b.userId = userId;
+        b.hotelId = hotelId;
+        b.checkInDate = checkIn;
+        b.checkOutDate = checkOut;
+        b.status = BookingStatus.PENDING;
+        b.bookingRooms = new ArrayList<>();
 
-            PhysicalRoom room = db.rooms.get(roomId);
-
-            RoomVariant selectedVariant = room.variants.stream()
-                    .filter(v -> v.variantId.equals(variantId))
-                    .findFirst().orElse(null);
-
-            if (selectedVariant == null)
-                throw new RuntimeException("Invalid Room Variant");
-
+        for (RoomRequest rr : roomRequests) {
             BookingRoom br = new BookingRoom();
-            br.physicalRoomId = roomId;
-            br.roomVariantId = variantId;
-            br.roomTypeId = selectedVariant.roomTypeId;
-            br.priceLocked = strategy.calculatePrice(selectedVariant, stay);
+            br.bookingRoomId = db.bookings.size() * 100 + rr.roomTypeId;
+            br.bookingId = b.bookingId;
+            br.roomTypeId = rr.roomTypeId;
+            br.quantity = rr.quantity;
 
-            booking.bookedRooms.add(br);
-            booking.totalAmount += br.priceLocked;
+            double price = pricingService.calculatePrice(rr.roomTypeId, checkIn, checkOut);
+            br.pricePerNight = price / ChronoUnit.DAYS.between(checkIn, checkOut);
+            br.totalPrice = price;
+
+            b.bookingRooms.add(br);
+            b.totalPrice += price;
         }
 
-        db.bookings.put(booking.bookingId, booking);
-        return booking;
+        db.bookings.put(b.bookingId, b);
+        return b;
     }
 
-    /**
-     * After payment success → confirm booking.
-     */
-    public void confirmBooking(String bookingId) {
-        Booking booking = db.bookings.get(bookingId);
-        booking.status = BookingStatus.CONFIRMED;
+    void confirmBooking(int bookingId) {
+        Booking b = db.bookings.get(bookingId);
 
-        db.bookings.put(bookingId, booking);
-
-        // publish event
-        EventBus.publish(new BookingConfirmedEvent(bookingId));
-    }
-
-    /**
-     * Cancel booking → unlock rooms.
-     */
-    public void cancelBooking(String bookingId) {
-        Booking booking = db.bookings.get(bookingId);
-        booking.status = BookingStatus.CANCELLED;
-
-        for (BookingRoom br : booking.bookedRooms) {
-            lock.unlockRoom(br.physicalRoomId);
+        for (BookingRoom br : b.bookingRooms) {
+            inventoryService.reduceInventory(br.roomTypeId,
+                    b.checkInDate, b.checkOutDate, br.quantity);
+            lockManager.unlockRoomType(br.roomTypeId);
         }
 
-        db.bookings.put(bookingId, booking);
+        b.status = BookingStatus.CONFIRMED;
+    }
+
+    void cancelBooking(int bookingId) {
+        Booking b = db.bookings.get(bookingId);
+
+        for (BookingRoom br : b.bookingRooms) {
+            lockManager.unlockRoomType(br.roomTypeId);
+        }
+
+        b.status = BookingStatus.CANCELLED;
     }
 }
+
+class RoomRequest {
+    int roomTypeId;
+    int quantity;
+
+    RoomRequest(int r, int q) {
+        roomTypeId = r;
+        quantity = q;
+    }
+}
+

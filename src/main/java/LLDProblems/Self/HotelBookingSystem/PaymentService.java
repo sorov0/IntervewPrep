@@ -1,34 +1,43 @@
 package LLDProblems.Self.HotelBookingSystem;
 
-import java.util.UUID;
+import java.time.LocalDateTime;
 
 class PaymentService {
 
     DataStore db = DataStore.getInstance();
-    PaymentGatewayFactory factory = new PaymentGatewayFactory();
+    BookingManager bookingManager = new BookingManager();
 
-    public Payment makePayment(String bookingId, PaymentMode mode, double amount) {
+    Payment initiatePayment(int bookingId, double amount, PaymentMode mode) {
 
-        Payment payment = new Payment();
-        payment.paymentId = UUID.randomUUID().toString();
-        payment.bookingId = bookingId;
-        payment.mode = mode;
-        payment.amount = amount;
+        PaymentGateway gateway = PaymentGatewayFactory.getGateway(mode);
+        PaymentResponse response = gateway.makePayment(amount);
 
-        PaymentGateway gateway = factory.getGateway(mode);
-        payment.status = gateway.process(payment);
+        Payment p = new Payment();
+        p.paymentId = db.payments.size() + 1;
+        p.bookingId = bookingId;
+        p.amount = amount;
+        p.mode = mode;
+        p.status = response.success ? PaymentStatus.PENDING : PaymentStatus.FAILED;
+        p.transactionRef = response.transactionRef;
+        p.timestamp = LocalDateTime.now();
 
-        db.payments.put(payment.paymentId, payment);
+        db.payments.put(p.paymentId, p);
+        return p;
+    }
 
-        if (payment.status == PaymentStatus.SUCCESS) {
-            // attach to booking
-            Booking booking = db.bookings.get(bookingId);
-            booking.paymentId = payment.paymentId;
-            db.bookings.put(bookingId, booking);
+    void verifyPayment(int bookingId, int paymentId) {
+        Payment p = db.payments.get(paymentId);
+        PaymentGateway gateway = PaymentGatewayFactory.getGateway(p.mode);
 
-            EventBus.publish(new PaymentSuccessEvent(bookingId));
+        boolean success = gateway.verifyPayment(p.transactionRef);
+
+        if (success) {
+            p.status = PaymentStatus.SUCCESS;
+            bookingManager.confirmBooking(bookingId);
+        } else {
+            p.status = PaymentStatus.FAILED;
+            bookingManager.cancelBooking(bookingId);
         }
-
-        return payment;
     }
 }
+

@@ -74,7 +74,8 @@ public class Graph {
     }
 
     // Print all possible paths from top left to bottom right of a mXm matrix
-    public static void getAllPathUtil(int[][] arr , int i , int j , int n , ArrayList<Integer> tmp , ArrayList<ArrayList<Integer> > res){
+    public static void getAllPathUtil(int[][] arr , int i , int j , int n , ArrayList<Integer> tmp ,
+                                      ArrayList<ArrayList<Integer> > res){
 
         if(i>=n || j>=n) return;
 

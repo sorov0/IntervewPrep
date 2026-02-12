@@ -1,0 +1,302 @@
+
+1️⃣ USER MANAGEMENT
+The system must support:
+
+Create a user
+Store user details (name, email, phone, id)
+Retrieve user information
+
+2️⃣ GROUP MANAGEMENT
+
+Users should be able to:
+Create a group
+Add/remove members
+Add expenses inside a group
+View group-level balance sheet
+
+
+3️⃣ EXPENSE MANAGEMENT
+➤ Create Expense
+
+Each expense must contain:
+Who paid?
+Total amount
+List of involved users
+Split type
+Description
+
+➤ Supported Split Types
+Must support at least:
+Equal Split
+Exact Split
+Percentage Split
+(Extensible so more types can be added later — discount, shares, weighted split, etc.)
+
+4️⃣ SPLIT CALCULATION LOGIC
+
+The system must:
+Validate splits based on strategy
+Calculate each user’s share
+Assign amounts appropriately
+Produce consistent results
+
+5️⃣ BALANCE SHEET & LEDGER
+
+System must maintain:
+Who owes how much to whom
+Net balances across all users
+Group-wise balances
+Should reduce “cyclic debts” via netting
+(optional but ideal)
+Users should be able to view:
+Overall balances
+Group-wise balances
+User-to-user balances
+
+
+6️⃣ SETTLEMENT & SIMPLIFICATION
+
+The system must allow:
+A user to settle up with another user
+After settlement, balances should update
+Show simplified debts (optional advanced requirement)
+
+API:
+
+1️⃣ USER APIs
+
+✔ Create User
+POST /api/users
+Request:
+{
+  "name": "Saurav",
+  "email": "saurav@test.com",
+  "phone": "9999999999"
+}
+
+Response: 201 CREATED
+{
+  "userId": "U1",
+  "name": "Saurav",
+  "email": "saurav@test.com",
+  "phone": "9999999999"
+}
+
+✔ Get User
+GET /api/users/{userId}
+Response:
+{
+  "userId": "U1",
+  "name": "Saurav",
+  "email": "saurav@test.com",
+  "phone": "9999999999"
+}
+
+✔ List All Users
+GET /api/users
+Response:
+[
+  { "userId": "U1", "name": "Saurav" },
+  { "userId": "U2", "name": "Ravi" }
+]
+
+2️⃣ GROUP APIs
+
+✔ Create Group
+POST /api/groups
+Request:
+{
+  "name": "Goa Trip"
+}
+Response:
+{
+  "groupId": "G1",
+  "name": "Goa Trip"
+}
+
+✔ Get Group Details
+GET /api/groups/{groupId}
+Response:
+{
+  "groupId": "G1",
+  "name": "Goa Trip",
+  "members": ["U1","U2","U3"],
+  "expenses": ["E1","E2"]
+}
+
+3️⃣ GROUP MEMBERSHIP APIs
+
+✔ Add User to Group
+POST /api/groups/{groupId}/members
+Request:
+{
+  "userId": "U1"
+}
+Response:
+{
+  "groupId": "G1",
+  "members": ["U1","U2","U3"]
+}
+
+✔ List Group Members
+GET /api/groups/{groupId}/members
+[
+  { "userId": "U1", "name": "Saurav" },
+  { "userId": "U2", "name": "Ravi" }
+]
+
+4️⃣ EXPENSE APIs
+
+✔ Create Expense
+POST /api/groups/{groupId}/expenses
+
+Handles all split types: EQUAL, EXACT, PERCENTAGE
+
+Request:
+{
+  "description": "Dinner",
+  "paidBy": "U1",
+  "totalAmount": 300,
+  "splitType": "EQUAL",
+  "splits": [
+    { "userId": "U1" },
+    { "userId": "U2" },
+    { "userId": "U3" }
+  ]
+}
+OR
+{
+  "description": "Cab",
+  "paidBy": "U2",
+  "totalAmount": 500,
+  "splitType": "PERCENTAGE",
+  "splits": [
+    { "userId": "U1", "percent": 40 },
+    { "userId": "U2", "percent": 20 },
+    { "userId": "U3", "percent": 40 }
+  ]
+}
+OR
+{
+  "description": "Food",
+  "paidBy": "U3",
+  "totalAmount": 900,
+  "splitType": "EXACT",
+  "splits": [
+    { "userId": "U1", "amount": 300 },
+    { "userId": "U2", "amount": 300 },
+    { "userId": "U3", "amount": 300 }
+  ]
+}
+Response:
+{
+  "expenseId": "E1",
+  "description": "Dinner",
+  "splitType": "EQUAL",
+  "totalAmount": 300
+}
+
+✔ List Expenses of a Group
+GET /api/groups/{groupId}/expenses
+[
+  {
+    "expenseId": "E1",
+    "description": "Dinner",
+    "totalAmount": 300
+  },
+  {
+    "expenseId": "E2",
+    "description": "Cab",
+    "totalAmount": 500
+  }
+]
+
+5️⃣ BALANCE APIs
+
+✔ Get overall balances across system
+GET /api/balances
+[
+  { "from": "Saurav", "to": "Ravi", "amount": 100.0 },
+  { "from": "Ravi", "to": "Saurav", "amount": 200.0 },
+  { "from": "Neha", "to": "Saurav", "amount": 100.0 },
+  { "from": "Neha", "to": "Ravi", "amount": 200.0 }
+]
+
+✔ Get Balance of a Single User
+GET /api/users/{userId}/balances
+[
+  { "to": "Ravi", "amount": 100.0 },
+  { "from": "Neha", "amount": 100.0 }
+]
+
+✔ Get Group Balance
+GET /api/groups/{groupId}/balances
+{
+  "G1": [
+    { "from": "Saurav", "to": "Ravi", "amount": 100.0 },
+    { "from": "Neha", "to": "Ravi", "amount": 200.0 }
+  ]
+}
+
+6️⃣ SETTLEMENT APIs
+============================================
+✔ Settle Between Two Users
+POST /api/settlements
+Request:
+{
+  "userA": "U1",
+  "userB": "U2"
+}
+
+
+Response:
+{
+  "status": "SUCCESS",
+  "message": "All balances settled between U1 and U2"
+}
+
+Domain Schema:
+
+User {
+    userId: String
+    name: String
+    email: String
+    phone: String
+}
+
+Group {
+    groupId: String
+    name: String
+    members: List<User>
+    expenses: List<Expense>
+}
+
+Expense {
+    expenseId: String
+    group: Group
+    paidBy: User
+    description: String
+    totalAmount: double
+    splitType: String   // EQUAL / EXACT / PERCENTAGE
+    splits: List<ExpenseSplit>
+}
+
+ExpenseSplit {
+    id: Long
+    expense: Expense
+    user: User
+    amount: Double      // applicable for EXACT/EQUAL
+    percent: Double     // applicable for PERCENTAGE
+}
+
+Ledger {
+    id: Long
+    fromUser: User
+    toUser: User
+    amount: Double
+}
+
+GroupMember {
+    groupId: String
+    userId: String
+}

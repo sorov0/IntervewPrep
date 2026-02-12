@@ -1,289 +1,120 @@
 package LLDProblems.Self.HotelBookingSystem;
 
-// ============================================================================
-// PART 3 — RUNNER SIMULATION (Main Class)
-
-/*
-⭐ HOTEL BOOKING SYSTEM — REQUIREMENTS SUMMARY
-1) Core Domain
-
-Operates across multiple cities
-
-Each city has multiple hotels
-
-Each hotel supports multiple RoomTypes (Deluxe, Suite…)
-
-Each physical room has multiple RoomVariants (different prices/amenities)
-
-2) Availability
-
-Rooms store booked date ranges
-
-Search must return only rooms free for the date range
-
-Locked rooms must be excluded
-
-3) Advanced Search Filters
-
-City
-
-Hotel
-
-RoomType
-
-Price range
-
-Adults/Children capacity
-
-Required amenities
-
-Must support multi-city queries
-
-4) Booking Workflow
-
-Create booking (locks rooms)
-
-Confirm booking (after payment)
-
-Cancel booking (unlocks rooms)
-
-Booking states:
-PENDING → CONFIRMED → CHECKED_IN → CHECKED_OUT / CANCELLED
-
-5) Concurrency Control
-
-RoomLockManager (Singleton) prevents double booking
-
-Parallel booking attempts → only one succeeds
-
-6) Pricing
-
-Based on RoomVariant price × stay days
-
-Uses Strategy pattern for pricing rules
-
-7) Payment
-
-Supports UPI/Card/Wallet
-
-Uses Strategy + Factory for gateways
-
-Payment success publishes events
-
-8) Notifications
-
-Observer pattern
-
-Email + SMS listeners for events
-(BookingConfirmed, PaymentSuccess, CheckIn)
-
-9) Check-in / Check-out
-
-Creates a StayRecord
-
-Stores check-in & check-out timestamps
-
-Updates booking state
- */
-// ============================================================================
-
-import java.util.Date;
-import java.util.HashMap;
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
-public class HotelBookingSystemRunner {
-
+class HotelBookingSystemRunner {
 
     public static void main(String[] args) {
 
-        // ---------------------------
-        // 1. Setup: Register Notification Subscribers
-        // ---------------------------
-        EventBus.register(new EmailNotificationService());
-        EventBus.register(new SMSNotificationService());
-
-        // ---------------------------
-        // 2. Create DataStore Reference
-        // ---------------------------
         DataStore db = DataStore.getInstance();
 
-        // ---------------------------
-        // 3. Create City
-        // ---------------------------
-        City city = new City();
-        city.cityId = "C1";
-        city.cityName = "Bangalore";
+        // ========== Register Notification Listeners ==========
+        EventBus bus = EventBus.getInstance();
+        NotificationService ns = new NotificationService();
 
-        db.cities.put(city.cityId, city);
+        bus.subscribe("BOOKING_CONFIRMED", ns);
+        bus.subscribe("BOOKING_CANCELLED", ns);
+        bus.subscribe("PAYMENT_SUCCESS", ns);
+        bus.subscribe("CHECKED_IN", ns);
+        bus.subscribe("CHECKED_OUT", ns);
 
-        // ---------------------------
-        // 4. Create Room Types (Deluxe, Suite)
-        // ---------------------------
-        RoomType deluxe = new RoomType();
-        deluxe.typeId = "RT1";
-        deluxe.typeName = "Deluxe";
-        deluxe.maxAdults = 2;
-        deluxe.maxChildren = 1;
-        deluxe.description = "Deluxe room with basic amenities";
+        // ========== Create a user ==========
+        User u = new User();
+        u.userId = 1;
+        u.name = "Saurav Kumar";
+        u.email = "saurav@test.com";
+        db.users.put(1, u);
 
-        RoomType suite = new RoomType();
-        suite.typeId = "RT2";
-        suite.typeName = "Suite";
-        suite.maxAdults = 3;
-        suite.maxChildren = 2;
-        suite.description = "Spacious suite with living area";
+        // ========== Create hotel data ==========
+        Hotel h = new Hotel();
+        h.hotelId = 1;
+        h.cityId = 101;
+        h.name = "The Grand Palace";
+        h.starRating = 4.8;
+        h.roomTypeIds = List.of(10);
+        db.hotels.put(1, h);
 
-        // ---------------------------
-        // 5. Create Hotel
-        // ---------------------------
-        Hotel hotel = new Hotel();
-        hotel.hotelId = "H1";
-        hotel.name = "Blue Orchid Hotel";
-        hotel.cityId = "C1";
-        hotel.address = "MG Road";
-        hotel.rating = 4.5;
+        RoomType rt = new RoomType();
+        rt.roomTypeId = 10;
+        rt.hotelId = 1;
+        rt.name = "Deluxe Room";
+        rt.basePrice = 3000;
+        rt.totalRooms = 20;
+        db.roomTypes.put(10, rt);
 
-        // attach room types
-        hotel.supportedRoomTypes.add(deluxe);
-        hotel.supportedRoomTypes.add(suite);
-
-        // add hotel to city list and database
-        city.hotels.add(hotel);
-        db.hotels.put(hotel.hotelId, hotel);
-
-        // ---------------------------
-        // 6. Create Physical Rooms
-        // ---------------------------
-        PhysicalRoom r101 = new PhysicalRoom();
-        r101.roomId = "R101";
-        r101.roomNumber = "101";
-
-        PhysicalRoom r102 = new PhysicalRoom();
-        r102.roomId = "R102";
-        r102.roomNumber = "102";
-
-        // add to hotel
-        hotel.physicalRooms.add(r101);
-        hotel.physicalRooms.add(r102);
-
-        db.rooms.put(r101.roomId, r101);
-        db.rooms.put(r102.roomId, r102);
-
-        // ---------------------------
-        // 7. Add Room Variants (same room, multiple selling options)
-        // ---------------------------
-        RoomVariant rv1 = new RoomVariant();
-        rv1.variantId = "RV1";
-        rv1.roomTypeId = deluxe.typeId;
-        rv1.pricePerNight = 3000;
-
-        RoomVariant rv2 = new RoomVariant();
-        rv2.variantId = "RV2";
-        rv2.roomTypeId = suite.typeId;
-        rv2.pricePerNight = 5000;
-
-        r101.variants.add(rv1);
-        r101.variants.add(rv2);
-
-        // room 102 too
-        RoomVariant rv3 = new RoomVariant();
-        rv3.variantId = "RV3";
-        rv3.roomTypeId = deluxe.typeId;
-        rv3.pricePerNight = 3200;
-
-        r102.variants.add(rv3);
-
-        // ---------------------------
-        // 8. Create a User
-        // ---------------------------
-        User user = new User();
-        user.userId = "U1";
-        user.name = "Rahul Sharma";
-        user.email = "rahul@example.com";
-
-        // ---------------------------
-        // 9. Search Available Rooms (InventoryService)
-        // ---------------------------
-        InventoryService inventory = new InventoryService();
-        DateRange stay = new DateRange(new Date(), new Date(System.currentTimeMillis() + 86400000L)); // 1 night
-
-        System.out.println("Searching available rooms...");
-        List<PhysicalRoom> available = inventory.searchAvailableRooms("C1", stay);
-
-        for (PhysicalRoom pr : available) {
-            System.out.println("Available Room: " + pr.roomId + " (" + pr.roomNumber + ")");
-            for (RoomVariant rv : pr.variants) {
-                System.out.println("  → Variant " + rv.variantId + " [" + rv.roomTypeId + "] Price: ₹" + rv.pricePerNight);
-            }
+        // ========== Physical Rooms ==========
+        for (int i = 1; i <= 20; i++) {
+            PhysicalRoom pr = new PhysicalRoom();
+            pr.roomId = i;
+            pr.roomTypeId = 10;
+            pr.roomNumber = "DLX-" + i;
+            pr.status = RoomStatus.ACTIVE;
+            db.physicalRooms.put(i, pr);
         }
 
-        // ---------------------------
-        // 10. Create Booking (BookingManager)
-        // ---------------------------
-        BookingService bookingManager = new BookingService();
+        // ========== Create inventory ==========
+        LocalDate checkIn = LocalDate.now().plusDays(1);
+        LocalDate checkOut = checkIn.plusDays(3);
 
-        // Pick Room101 → Suite RV2
-        Map<String, String> roomSelections = new HashMap<>();
-        roomSelections.put("R101", "RV2");
+        for (LocalDate d = checkIn; !d.isAfter(checkOut.minusDays(1)); d = d.plusDays(1)) {
 
-        Booking booking = bookingManager.createBooking(
-                user.userId,
-                city.cityId,
-                hotel.hotelId,
-                stay,
-                roomSelections
-        );
+            RoomInventory inv = new RoomInventory();
+            inv.inventoryId = rt.roomTypeId * 10000 + d.hashCode();
+            inv.roomTypeId = 10;
+            inv.date = d;
+            inv.availableCount = 10;
 
-        System.out.println("\nBooking Created:");
-        System.out.println("Booking ID: " + booking.bookingId);
-        System.out.println("Total Amount: ₹" + booking.totalAmount);
+            db.inventories.put(inv.inventoryId, inv);
+        }
 
-        // ---------------------------
-        // 11. Payment (PaymentService)
-        // ---------------------------
-        PaymentService paymentService = new PaymentService();
-        Payment payment = paymentService.makePayment(
-                booking.bookingId,
-                PaymentMode.UPI,
-                booking.totalAmount
-        );
+        // ====== NEW: SEARCH FLOW ======
+        SearchService searchService = new SearchService();
 
-        System.out.println("\nPayment Done:");
-        System.out.println("Payment ID: " + payment.paymentId);
-        System.out.println("Status: " + payment.status);
+        System.out.println("\n=========== SEARCH RESULTS ===========");
 
-        // ---------------------------
-        // 12. Confirm Booking
-        // ---------------------------
-        bookingManager.confirmBooking(booking.bookingId);
+        List<Hotel> hotels = searchService.searchHotels(101, checkIn, checkOut);
 
-        System.out.println("\nBooking confirmed!");
+        System.out.println("Hotels available in city 101:");
+        for (Hotel hotel : hotels) {
+            System.out.println(" → " + hotel.name);
+        }
 
-        // ---------------------------
-        // 13. Check-In
-        // ---------------------------
-        CheckInService checkInManager = new CheckInService();
-        checkInManager.checkIn(booking.bookingId);
+        System.out.println("\nAvailable room types in hotel -> The Grand Palace:");
+        List<RoomType> availableRoomTypes =
+                searchService.getAvailableRoomTypes(1, checkIn, checkOut);
 
-        System.out.println("\nUser checked in!");
+        for (RoomType rt2 : availableRoomTypes) {
+            System.out.println(" → " + rt2.name);
+        }
 
-        // ---------------------------
-        // 14. Check-Out
-        // ---------------------------
-        checkInManager.checkOut(booking.bookingId);
+        // ======= END SEARCH FLOW =======
 
-        System.out.println("\nUser checked out!");
+        // ========== Create Booking ==========
+        BookingManager bm = new BookingManager();
+        List<RoomRequest> req = List.of(new RoomRequest(10, 2));
 
-        // ---------------------------
-        // 15. Display Final Booking State
-        // ---------------------------
-        Booking finalBooking = db.bookings.get(booking.bookingId);
+        Booking booking = bm.createBooking(1, 1, req, checkIn, checkOut);
+        System.out.println("\nBooking Created → ID: " + booking.bookingId);
+        System.out.println("Total Price: " + booking.totalPrice);
 
-        System.out.println("\n===== FINAL BOOKING SUMMARY =====");
-        System.out.println("Booking ID: " + finalBooking.bookingId);
-        System.out.println("Status: " + finalBooking.status);
-        System.out.println("StayRecord: " + finalBooking.stayRecordId);
-        System.out.println("Payment: " + finalBooking.paymentId);
+        // ========== Initiate Payment ==========
+        PaymentService ps = new PaymentService();
+
+        Payment p = ps.initiatePayment(booking.bookingId, booking.totalPrice, PaymentMode.UPI);
+        ps.verifyPayment(booking.bookingId, p.paymentId);
+
+        System.out.println("Booking Status After Payment → " + db.bookings.get(booking.bookingId).status);
+
+        // ========== Check-In ==========
+        CheckInManager cim = new CheckInManager();
+        cim.checkIn(booking.bookingId);
+
+        System.out.println("Booking Status After Check-In → " + db.bookings.get(booking.bookingId).status);
+
+        // ========== Check-Out ==========
+        cim.checkOut(booking.bookingId);
+        System.out.println("Booking Status After Check-Out → " + db.bookings.get(booking.bookingId).status);
     }
 }
+

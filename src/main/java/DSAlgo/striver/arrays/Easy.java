@@ -258,11 +258,6 @@ public class Easy {
         return maxProfit;
     }
 
-
-
-
-
-
     public static void main(String[] args) {
 
         ArrayList<Integer> arr = new ArrayList<>(Arrays.asList(2,3,4,1,5,-4,6));

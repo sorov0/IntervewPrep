@@ -7,6 +7,41 @@ import java.util.stream.Collectors;
 public class InterviewProblem {
 
 
+    // Find max-sum of the longest consecutive numbers
+    /*
+    [100, 4, 200, 1, 3, 2]
+    The longest consecutive sequence is: 1, 2, 3, 4   → sum = 10
+     */
+
+    public int longestConsecutiveMaxSum(int[] nums) {
+
+        HashSet<Integer> set = new HashSet<>();
+        for (int n : nums) set.add(n);
+
+        int maxLength = 0;
+        int maxSum = 0;
+
+        for(int n : set){
+            if(!set.contains(n-1)){
+                int cur = n;
+                int len = 0;
+                int sum = 0;
+
+                while(set.contains(cur)){
+                    len++;
+                    sum+=cur;
+                    cur++;
+                }
+                if(len > maxLength || (maxLength == len && sum > maxSum)){
+                    maxLength = len;
+                    maxSum = sum;
+                }
+            }
+        }
+        return maxSum;
+    }
+
+
     // https://leetcode.com/problems/next-permutation/description/
     // Input: nums = [1,2,3]
     // Output: [1,3,2]

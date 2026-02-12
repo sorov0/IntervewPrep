@@ -1,9 +1,5 @@
 package LLDProblems.Self.HotelBookingSystem;
 
-// ============================================================================
-// DATASTORE — Acts like BookMyShow BMSDatabase
-// ============================================================================
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,15 +7,14 @@ class DataStore {
 
     private static DataStore instance = null;
 
-    // City → Hotels → Rooms
-    Map<String, City> cities = new HashMap<>();
-
-    // Flat maps for quick access
-    Map<String, Hotel> hotels = new HashMap<>();
-    Map<String, PhysicalRoom> rooms = new HashMap<>();
-
-    Map<String, Booking> bookings = new HashMap<>();
-    Map<String, Payment> payments = new HashMap<>();
+    Map<Integer, City> cities = new HashMap<>();
+    Map<Integer, Hotel> hotels = new HashMap<>();
+    Map<Integer, RoomType> roomTypes = new HashMap<>();
+    Map<Integer, PhysicalRoom> physicalRooms = new HashMap<>();
+    Map<Integer, RoomInventory> inventories = new HashMap<>();
+    Map<Integer, Booking> bookings = new HashMap<>();
+    Map<Integer, Payment> payments = new HashMap<>();
+    Map<Integer, User> users = new HashMap<>();
 
     private DataStore() {}
 
@@ -28,3 +23,4 @@ class DataStore {
         return instance;
     }
 }
+

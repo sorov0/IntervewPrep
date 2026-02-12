@@ -1,0 +1,292 @@
+
+// =====================================================================================================================
+
+# STEP 1 — Extract NOUNS (Entities)
+
+    Noun	Why it becomes a class?
+    Board	Physical structure
+    Cell / Square	Real-world position
+    Piece	Core domain entity
+    Player	Human/AI
+    Move	represents an action performed
+    Game	Represents current game-state
+    PieceType	conceptual classification
+    PieceColor	conceptual classification
+
+These form the entities layer.
+
+
+// =====================================================================================================================
+
+
+# STEP 2 — Extract VERBS (Methods → Services)
+
+    Action / Verb	         Belongs in
+    initialize board()	     GameManager
+    makeMove()	             MoveValidatorService + GameManager
+    validateMove()	         PieceMoveStrategy
+    checkCheckmate()	     CheckmateService
+    checkCheck()	         CheckService
+    getPossibleMoves()	     MoveService
+    switchTurn()	         GameManager
+    undoMove()	             UndoService
+
+These become services layer.
+
+
+// =====================================================================================================================
+
+
+# STEP 3 — Categorizing into the Golden Triad
+
+A) Entities (pure data, no logic)
+We will create:
+Piece, Cell (Square), Board, Player, Move, Game
+
+These hold data only — no business logic inside.
+
+B) Managers/Services (all behavior)
+
+✔ GameManager
+✔ MoveValidatorService
+✔ MoveExecutionService
+✔ CheckService
+✔ CheckmateService
+✔ PlayerTurnService
+✔ UndoService
+
+Everything actionable goes here.
+
+C) Helper Components
+High-variation area: movement rules differ per piece → Strategy Pattern.
+
+We create:
+
+✔ MoveStrategy interface
+✔ KingMoveStrategy
+✔ QueenMoveStrategy
+✔ RookMoveStrategy
+✔ KnightMoveStrategy
+✔ BishopMoveStrategy
+✔ PawnMoveStrategy
+
+Factory:
+
+✔ MoveStrategyFactory
+
+Singleton:
+
+✔ GameEngine / GameManager (optional)
+✔ No global locks needed except for online mode.
+
+
+// =====================================================================================================================
+
+
+# STEP 4 — DO NOT PUT LOGIC INSIDE ENTITIES
+Examples:
+❌ Piece.canMove()
+✔ MoveValidatorService.validateMove(piece)
+
+❌ Board.movePiece()
+✔ MoveExecutionService.executeMove()
+This is SRP + OCP in action.
+
+
+// =====================================================================================================================
+
+
+# STEP 5 — Identify High Variation → Use Strategy Pattern
+Movement behavior changes by piece type.
+Hence:
+
+interface MoveStrategy {
+    boolean isValidMove(Board board, Move move);
+    List<Cell> getPossibleMoves(Board board, Piece piece);
+}
+Each piece implements its own movement rule.
+This ensures OCP:
+Adding a new piece like “Camel” (in variants) requires just a new strategy class.
+
+
+// =====================================================================================================================
+
+
+# STEP 6 — Use Factory Pattern
+  To avoid switch-case:
+  class MoveStrategyFactory {
+      public static MoveStrategy getStrategy(PieceType type) { ... }
+  }
+  So services never check piece type manually.
+
+
+// =====================================================================================================================
+
+
+# STEP 7 — Singleton where Global State Required
+Chess has a single game instance → but not mandatory singleton.
+If doing multiplayer server-based → GameStore (Singleton) storing all active games.
+
+
+// =====================================================================================================================
+
+# STEP 8 — Think in System Flows
+  Every chess game flow is:
+  Initialize game
+  Players alternate turns
+  Player selects piece
+  Validate move
+  Execute move
+  Check:
+  Check
+  Checkmate
+  Stalemate
+  Draw
+  Promotion
+  Switch turn
+  Save move in history
+  Undo (optional)
+  Our LLD supports all flows.
+
+
+// =====================================================================================================================
+
+# STEP 9 — Decide Attributes Using 3-Question Rule
+
+Let's apply Q1/Q2/Q3:
+
+ENTITY: Piece
+
+Identity: id
+State: alive/dead, color
+Relationship: pieceType
+
+Attributes:
+
+class Piece {
+   private final int id;
+   private final PieceColor color;
+   private final PieceType type;
+   private boolean isAlive;
+}
+
+ENTITY: Cell
+
+Identity → coordinates
+State → which piece it holds
+Relationship → piece reference
+
+ENTITY: Board
+
+Identity → 8x8 grid
+State → arrangement
+Relationship → holds Cells
+
+ENTITY: Game
+
+Identity → gameId
+State → currentTurn, status
+Relationship → Board, Players, MoveHistory
+
+
+// =====================================================================================================================
+
+
+# STEP 10 — Methods = Verbs + must be in Services
+
+  Examples:
+
+  ✔ validateMove()
+  ✔ executeMove()
+  ✔ detectCheck()
+  ✔ detectCheckmate()
+  ✔ switchTurn()
+
+  Entities have no logic.
+
+
+// =====================================================================================================================
+
+
+
+# STEP 11 — Concurrency (if online game)
+
+  We add:
+
+  ✔ synchronized move operations
+  ✔ MoveLockManager (Singleton) if multiplayer
+
+  Chess normally doesn't need concurrency for offline mode.
+
+
+// =====================================================================================================================
+
+
+# STEP 12 — Events → Observer Pattern
+
+  When:
+
+  ✔ Checkmate
+  ✔ Check
+  ✔ Invalid move
+  ✔ Game end
+
+  We notify UI or external subscriber.
+
+  Example:
+
+  GameEventBus.publish(new CheckEvent(player))
+
+
+// =====================================================================================================================
+
+
+
+# STEP 13 — Add Runner / GameEngine
+
+  IMPORTANT for interviews.
+
+  Demonstrate:
+
+  initialize
+
+  move
+
+  validate
+
+  switch turn
+
+
+// ==========================================================================
+
+FULL CLASS DIAGRAM (High-Level)
+Entities:
+---------
+Game
+Board
+Cell
+Piece
+Player
+Move
+
+Services:
+---------
+GameManager
+MoveValidatorService
+MoveExecutionService
+CheckService
+CheckmateService
+PlayerTurnService
+UndoService
+
+Helpers:
+--------
+MoveStrategy (interface)
+  - PawnMoveStrategy
+  - RookMoveStrategy
+  - KnightMoveStrategy
+  - BishopMoveStrategy
+  - QueenMoveStrategy
+  - KingMoveStrategy
+
+MoveStrategyFactory
