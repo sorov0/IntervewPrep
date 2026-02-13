@@ -17,6 +17,7 @@ C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\jav
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\LLDProblems\Youtube\TicTacToeGame\Code\Model\PlayingPieceX.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\LLDProblems\Youtube\CarRentalSystem\Code\Payment.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\LLDProblems\Youtube\SnakeAndLadderGame\Code\Board.java
+C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\company\xebia\HashMapTest.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\LLDProblems\Youtube\ParkingLotSystem\Code3\vehicle\VehicleFactory.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\DesignPatterns\Examples\CreationalDesignPatterns\Code\Builder\EngineeringStudentBuilder.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\javaStreamAPI\PrimitiveStreams.java
@@ -30,6 +31,7 @@ C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\jav
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\DSAlgo\striver\arrays\InterviewProblem.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\LLDProblems\Self\HotelBookingSystem\PaymentService.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\DSAlgo\practice\arrays\EquillibriumPoint.java
+C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\company\xebia\Main.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\LLDProblems\Self\HotelBookingSystem\InventoryService.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\collections\mapInterface\ImmutableMapDemo.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\DSAlgo\practice\arrays\MergeSort_Array.java
@@ -126,7 +128,6 @@ C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\jav
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\DesignPatterns\Examples\BehavioralDesignPatterns\Code\ChainOfResponsibilityPattern\LLDLoggerSystem\LogProcessor.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\DesignPatterns\Examples\StructualDesignPatterns\Code\ProxyPattern\EmployeeDao.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\collections\listInterface\Person.java
-C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\company\capgemini\Main.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\DesignPatterns\Examples\BehavioralDesignPatterns\Code\ObservePattern\Observable\XYZProductObservable.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\DSAlgo\practice\miscellaneous\SortMapByValueUsingComparator.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\LLDProblems\Youtube\LRUCache\LRUCache.java
@@ -216,7 +217,6 @@ C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\jav
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\DesignPatterns\Examples\StructualDesignPatterns\Code\BridgePattern\Solution\Tree.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\DSAlgo\practice\dp\MinimumCoins.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\multithreading\threadAndRunnable\World.java
-C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\company\capgemini\UniqueBookCollection.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\DSAlgo\practice\strings\ImplementAtoi.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\LLDProblems\Self\SplitWise\SystemRunner.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\LLDProblems\Youtube\ParkingLotSystem\Code3\payment\CreditCardPayment.java
@@ -238,6 +238,7 @@ C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\jav
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\LLDProblems\Self\HotelBookingSystem\HotelBookingSystemRunner.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\DesignPatterns\Examples\StructualDesignPatterns\Code\DecoratorPattern\Marghrita.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\DesignPatterns\Examples\CreationalDesignPatterns\Code\ProtoType\IPrototype.java
+C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\Miscellaneous\UniqueBookCollection.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\JavaConcepts\Code\threadLearning\thread\MyThread.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\DesignPatterns\Examples\CreationalDesignPatterns\Code\AbstractFactory\Car.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\DSAlgo\practice\strings\ReverseWords.java
@@ -331,7 +332,6 @@ C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\jav
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\DesignPatterns\Examples\StructualDesignPatterns\Code\CompositePattern\SolutionWithCompositeDp\FileSystem.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\DesignPatterns\Examples\SolidPrinciples\Code\ISP\WaiterNew.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\DSAlgo\practice\dp\UniquePath.java
-C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\test\Main.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\InterviewQuestion\immutability\ImmutablePerson.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\javaStreamAPI\CollectorDemo.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\DSAlgo\practice\arrays\FindDateRangeForFrequency.java
@@ -372,7 +372,6 @@ C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\jav
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\DSAlgo\practice\binarysearch\SquareRootOfANumber.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\multithreading\synchronization\issue\Test.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\DSAlgo\practice\arrays\StockBuySell_MultipleDay.java
-C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\test\Test.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\LLDProblems\Youtube\ParkingLotSystem\Code3\vehicle\BikeVehicle.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\DSAlgo\practice\strings\CheckIfAStringIsRotatedByTwoPlaces.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\DesignPatterns\Examples\StructualDesignPatterns\Code\CompositePattern\ProblemStatement\File.java
@@ -383,5 +382,6 @@ C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\jav
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\LLDProblems\Youtube\ParkingLotSystem\Code2\ParkingSpotManagerFactory.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\DesignPatterns\Examples\CreationalDesignPatterns\Code\Factory\Circle.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\DSAlgo\practice\arrays\LargestNumberFormedFromAnArray.java
+C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\Miscellaneous\Main.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\LLDProblems\Youtube\CarRentalSystem\Code\User.java
 C:\SorovFolder\InterviewPrepration\FreshInterviewPrep\InterviewPrep\src\main\java\LLDProblems\Self\BookMyShow\SearchService.java

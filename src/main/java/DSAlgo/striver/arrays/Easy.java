@@ -19,23 +19,28 @@ public class Easy {
     // Assumption: The array has non-negative numbers
     //https://www.geeksforgeeks.org/problems/second-largest3735/1
 
-    static int secondLargestEle(ArrayList<Integer> arr){
+    public int getSecondLargest(int[] arr) {
+        // code here
 
-        // 2,4,1,5,2,7,6
-        int slargest = -1;
-        int largest = -1;
+        if (arr == null || arr.length < 2) {
+            return -1;
+        }
 
-        for(int i = 0 ; i <arr.size() ; i++){
+        int max = Integer.MIN_VALUE;
+        int secMax = Integer.MIN_VALUE;
 
-            if(arr.get(i) > largest){
-                slargest = largest;
-                largest = arr.get(i);
+        for(int i = 0 ; i<arr.length ; i++){
+
+            if(arr[i]>max){
+                secMax = max;
+                max = arr[i];
             }
-            else if (arr.get(i) > slargest && arr.get(i) < largest) {
-                slargest = arr.get(i);
+
+            else if(arr[i]>secMax && arr[i]<max){
+                secMax = arr[i];
             }
         }
-        return slargest;
+        return (secMax == Integer.MIN_VALUE) ? -1 : secMax;
     }
 
     static int thirdLargestEle(ArrayList<Integer> arr){

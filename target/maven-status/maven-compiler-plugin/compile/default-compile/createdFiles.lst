@@ -57,6 +57,7 @@ DSAlgo\striver\arrays\Easy.class
 LLDProblems\Self\ParkingLot\PaymentManager.class
 LLDProblems\Youtube\CarRentalSystem\Code\VehicleRentalSystem.class
 InterviewQuestion\immutability\MutableListContainer.class
+company\xebia\HashMapTest$Student.class
 DSAlgo\practice\strings\RomanToDecimal.class
 LLDProblems\Youtube\ParkingLotSystem\Code\Ticket.class
 multithreading\synchronization\issue\MyThread.class
@@ -128,6 +129,7 @@ DesignPatterns\Examples\StructualDesignPatterns\Code\DecoratorPattern\FarmHouse.
 LLDProblems\Self\ChessGame\RookMoveStrategy.class
 DesignPatterns\Examples\BehavioralDesignPatterns\Code\ObservePattern\Observer\NotificationAlertObserver.class
 LLDProblems\Self\ParkingLot\ParkingSpotManager.class
+Miscellaneous\UniqueBookCollection.class
 DSAlgo\practice\arrays\SetMatrixToZero.class
 LLDProblems\Self\ParkingLot\LowestFloorFirstParkingStrategy.class
 DSAlgo\practice\arrays\SpiralTraverseMatrix.class
@@ -162,9 +164,7 @@ DesignPatterns\Examples\StructualDesignPatterns\Code\CompositePattern\Sulution1C
 LLDProblems\Youtube\ParkingLotSystem\Code2\MinuteBasedPricingStrategy.class
 InterviewQuestion\stringLiteralVSstringObject\Main.class
 LLDProblems\Youtube\ParkingLotSystem\Code2\ParkingSpotManagerFactory.class
-company\capgemini\UniqueBookCollection.class
 LLDProblems\Self\ChessGame\KnightMoveStrategy.class
-company\capgemini\Book.class
 LLDProblems\Self\HotelBookingSystem\BookingRoom.class
 javaStreamAPI\IntermediateOperation.class
 collections\mapInterface\LRUCache.class
@@ -209,6 +209,7 @@ LLDProblems\Self\BookMyShow\UpiPaymentStrategy.class
 DSAlgo\practice\arrays\StockBuySell_SingleDay.class
 LLDProblems\Self\HotelBookingSystem\PaymentStatus.class
 DSAlgo\practice\dp\MaximumSumOfNonAdjascentElement.class
+company\xebia\HashMapTest.class
 LLDProblems\Self\ChessGame\MoveValidatorService.class
 LLDProblems\Self\SplitWise\Split.class
 collections\mapInterface\HashTableDemo.class
@@ -352,6 +353,7 @@ DesignPatterns\Examples\StructualDesignPatterns\Code\BridgePattern\ProblemStatem
 LLDProblems\Self\SplitWise\Group.class
 LLDProblems\Youtube\ParkingLotSystem\Code\FourWheelerManager.class
 javaStreamAPI\Phone.class
+Miscellaneous\Main.class
 LLDProblems\Youtube\ParkingLotSystem\Code2\TwoWheelerSpot.class
 LLDProblems\Self\ChessGame\MoveExecutionService.class
 LLDProblems\Self\ChessGame\Player.class
@@ -439,13 +441,11 @@ LLDProblems\Self\BookMyShow\ShowSeatStatus.class
 DesignPatterns\Examples\StructualDesignPatterns\Code\BridgePattern\Solution\Dog.class
 DesignPatterns\Examples\CreationalDesignPatterns\Code\Factory\Circle.class
 DesignPatterns\Examples\StructualDesignPatterns\Code\CompositePattern\Solution2CompositeDP\ArithmeticExpression.class
-test\Main.class
 DesignPatterns\Examples\CreationalDesignPatterns\Code\AbstractFactory\AbstractFactoryProducer.class
 javaStreamAPI\TerminalOperation.class
 DSAlgo\practice\arrays\SortingTutorial$1.class
 LLDProblems\Self\BookMyShow\ShowSeat.class
 LLDProblems\Self\HotelBookingSystem\PaymentService.class
-company\capgemini\Main.class
 LLDProblems\Self\BookMyShow\Movie.class
 LLDProblems\Youtube\ParkingLotSystem\Code\VehicleType.class
 LLDProblems\Self\HotelBookingSystem\RoomInventory.class
@@ -502,6 +502,7 @@ LLDProblems\Self\SplitWise\ExpenseManager.class
 DSAlgo\practice\miscellaneous\Recursion1.class
 DSAlgo\practice\arrays\InversionCount.class
 DesignPatterns\Examples\CreationalDesignPatterns\Code\Builder\EngineeringStudentBuilder.class
+Miscellaneous\Book.class
 DesignPatterns\Examples\CreationalDesignPatterns\Code\Factory\ShapeInstanceFactory.class
 DesignPatterns\Examples\BehavioralDesignPatterns\Code\StrategyPattern\WithoutStrategyPattern\PassengerVehicle.class
 DesignPatterns\Examples\CreationalDesignPatterns\Code\Builder\MBAStudentBuilder.class
@@ -529,12 +530,12 @@ multithreading\synchronization\issue\Test.class
 LLDProblems\Youtube\ParkingLotSystem\Code3\payment\PaymentService.class
 multithreading\threadAndRunnable\World.class
 DesignPatterns\Examples\CreationalDesignPatterns\Code\Singleton\DbConnectionEager.class
-test\Test.class
 DesignPatterns\Examples\StructualDesignPatterns\Code\BridgePattern\ProblemStatement\Dog.class
 DesignPatterns\Examples\CreationalDesignPatterns\Code\Factory\Rectangle.class
 LLDProblems\Self\BookMyShow\PaymentStrategy.class
 LLDProblems\Self\BookMyShow\SmsNotificationStrategy.class
 LLDProblems\Youtube\TicTacToeGame\Code\Model\PlayingPieceO.class
+company\xebia\Main.class
 DSAlgo\practice\miscellaneous\SortedMapCustom$1.class
 DesignPatterns\Examples\BehavioralDesignPatterns\Code\StrategyPattern\WithStrategyPattern\Strategy\XYZDriveStrategy.class
 DSAlgo\practice\dp\LongestPalindromicSubstring.class

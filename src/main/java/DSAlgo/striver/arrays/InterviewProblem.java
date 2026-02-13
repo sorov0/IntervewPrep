@@ -13,7 +13,35 @@ public class InterviewProblem {
     The longest consecutive sequence is: 1, 2, 3, 4   → sum = 10
      */
 
-    public int longestConsecutiveMaxSum(int[] nums) {
+    public int longestConsecutiveMaxSumONLogN(int[] nums) {
+        int curSum = nums[0];
+        int curLen = 1;
+        int maxSum = nums[0];
+        int maxLen = 1;
+
+        Arrays.sort(nums);
+
+        for(int i = 1 ; i<nums.length ; i++){
+            if(nums[i] == nums[i-1]) continue;
+
+            if(nums[i] == nums[i-1] + 1){
+                curLen++;
+                curSum+=nums[i];
+            }else{
+                curLen = 1;
+                curSum = nums[i];
+            }
+
+            if(curLen > maxLen || (curLen == maxLen && curSum > maxSum)){
+                maxLen = curLen;
+                maxSum = curSum;
+            }
+        }
+        return maxSum;
+
+    }
+
+    public int longestConsecutiveMaxSumON(int[] nums) {
 
         HashSet<Integer> set = new HashSet<>();
         for (int n : nums) set.add(n);

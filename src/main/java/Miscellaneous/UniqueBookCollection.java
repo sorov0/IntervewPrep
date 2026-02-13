@@ -1,4 +1,4 @@
-package company.capgemini;
+package Miscellaneous;
 
 import java.util.HashSet;
 import java.util.Objects;

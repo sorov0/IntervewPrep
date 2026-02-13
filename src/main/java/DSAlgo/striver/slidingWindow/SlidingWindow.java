@@ -16,7 +16,7 @@ public class SlidingWindow {
 
 
     // https://leetcode.com/problems/maximum-subarray/
-    public int maxSubArray(int[] nums) {
+    public int maxSumSubArray(int[] nums) {
         int curSum = nums[0];
         int totalSum = nums[0];
         for(int i = 1 ; i < nums.length ; i++){
@@ -30,10 +30,65 @@ public class SlidingWindow {
         return totalSum;
     }
 
+    // Extension(Find the SubArray) to https://leetcode.com/problems/maximum-subarray/
+    static int[] getSubArrayOfMaxSum(int arr[]){
+
+        int curSum = arr[0];
+        int totalSum = arr[0];
+
+        int leftInd = 0;;
+        int rightInd = 0;
+
+        for(int right = 1 ; right<arr.length ; right++){
+
+            if(arr[right] > curSum + arr[right]){
+                leftInd = right;
+                curSum = arr[right];
+            }else{
+                curSum = curSum + arr[right];
+            }
+
+            if(curSum > totalSum){
+                rightInd = right;
+                totalSum = curSum;
+            }
+        }
+        return new int[]{leftInd, rightInd};
+    }
+
+    public int maxProductSubArray(int[] nums) {
+
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+
+        int max = nums[0];
+        int min = nums[0];
+        int result = nums[0];
+
+        for (int i = 1; i < nums.length; i++) {
+
+            // If current number is negative,
+            // swap max and min because:
+            // multiplying by a negative flips sign
+            // so max could become min and min could become max
+            if (nums[i] < 0) {
+                int temp = max;
+                max = min;
+                min = temp;
+            }
+            max = Math.max(nums[i], max * nums[i]);
+            min = Math.min(nums[i], min * nums[i]);
+
+            result = Math.max(result, max);
+        }
+
+        return result;
+    }
+
     // https://leetcode.com/problems/maximum-absolute-sum-of-any-subarray/description/
     public int maxAbsoluteSum(int[] nums) {
 
-        int left = 0;
         int curSum = nums[0];
         int totalMaxSum = nums[0];
 
@@ -83,7 +138,7 @@ public class SlidingWindow {
     //Output: 4 (subarray [5,1,1,1])
     // Applicable only when array has all positive numbers
 
-    public int longestSubarraySumNotGreaterThanK(int[] arr, int k) {
+    public int longestSubarraySumNotGreaterThanTarget(int[] arr, int target) {
         int left = 0;
         int sum = 0;
         int maxLength = 0;
@@ -92,7 +147,7 @@ public class SlidingWindow {
 
             sum = sum +arr[right];
 
-            while(sum > k && left < right){
+            while(sum > target && left < right){
                 sum = sum - arr[left];
                 left++;
             }
